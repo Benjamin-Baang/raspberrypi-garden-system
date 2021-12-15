@@ -31,4 +31,6 @@ def contrast_stretch(im):
 
 
 display(original, 'Original')
+contrasted = contrast_stretch(original)
+display(contrasted, 'Contrasted original')
 
