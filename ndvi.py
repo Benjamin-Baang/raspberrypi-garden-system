@@ -52,6 +52,24 @@ def contrast_stretch(im):
     return out
 
 
+'''
+Calculate NDVI (Normalised Difference Vegetation Index)
+'''
+def calc_ndvi(image):
+    # Get blue, green, red values
+    b, g, r = cv2.split(image)
+    # Add red and blue
+    bottom = (r.astype(float) + b.astype(float))
+    # If bottom = 0, set it to 0.01 (avoid divide by 0)
+    bottom[bottom==0] = 0.01
+    # Calculate NDVI value
+    # by subtracting blue by red
+    # then divided by the sum
+    ndvi = (b.astype(float) - r) / bottom
+    # Return NDVI value
+    return ndvi
+
+
 display(original, 'Original')
 contrasted = contrast_stretch(original)
 display(contrasted, 'Contrasted original')
