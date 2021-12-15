@@ -20,5 +20,15 @@ def contrast_stretch(im):
     in_min = np.percentile(im, 5)
     in_max = np.percentile(im, 95)
 
+    out_min = 0.0
+    out_max = 255.0
+
+    out = im - in_min
+    out *= ((out_min - out_max) / (in_min - in_max))
+    out += in_min
+
+    return out
+
 
 display(original, 'Original')
+
