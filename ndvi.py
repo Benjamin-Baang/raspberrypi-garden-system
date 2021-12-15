@@ -79,3 +79,7 @@ cv2.imwrite('contrasted.png', contrasted)
 ndvi = calc_ndvi(contrasted)
 display(ndvi, 'NDVI')
 cv2.imwrite('ndvi.png', ndvi)
+# If image is too dark, increase contrast
+ndvi_contrasted = contrast_stretch(ndvi)
+display(ndvi_contrasted, 'NDVI Contrasted')
+cv2.imwrite('ndvi_contrasted.png', ndvi_contrasted)
