@@ -75,4 +75,7 @@ contrasted = contrast_stretch(original)
 display(contrasted, 'Contrasted original')
 # Create/Update contrasted image file
 cv2.imwrite('contrasted.png', contrasted)
-
+# Calculate NDVI value
+ndvi = calc_ndvi(contrasted)
+display(ndvi, 'NDVI')
+cv2.imwrite('ndvi.png', ndvi)
