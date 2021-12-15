@@ -17,7 +17,8 @@ def display(image, image_name):
 
 
 def contrast_stretch(im):
-
+    in_min = np.percentile(im, 5)
+    in_max = np.percentile(im, 95)
 
 
 display(original, 'Original')
