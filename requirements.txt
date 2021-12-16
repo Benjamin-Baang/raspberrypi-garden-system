@@ -1,0 +1,4 @@
+numpy==1.21.4
+opencv-python==4.5.4.60
+picamera==1.13
+pkg_resources==0.0.0
