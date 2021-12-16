@@ -63,9 +63,9 @@ def calc_ndvi(image):
     # If bottom = 0, set it to 0.01 (avoid divide by 0)
     bottom[bottom==0] = 0.01
     # Calculate NDVI value
-    # by subtracting blue by red
+    # by subtracting red by blue
     # then divided by the sum
-    ndvi = (b.astype(float) - r) / bottom
+    ndvi = (r.astype(float) - b) / bottom
     # Save NDVI array as .csv file
     # (warning - file size is about 32 MB)
     # np.savetxt("output.csv", ndvi, fmt="%.3f", delimiter=",")
