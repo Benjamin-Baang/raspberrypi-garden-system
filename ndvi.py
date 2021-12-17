@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # Load a specific image
-original = cv2.imread('/home/pi/project/park.png')
+original = cv2.imread('park.png')
 
 
 ''' 
