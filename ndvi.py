@@ -18,7 +18,6 @@ cam.capture('test.png')
 # original = cv2.imread('/home/pi/project/park.png')
 original = cv2.imread('test.png')
 
-
 ''' 
 Displays the image.
 Type any key to close the window.
