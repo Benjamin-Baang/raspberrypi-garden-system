@@ -9,3 +9,6 @@ ndvi.png
 ndvi_contrasted.png
 output.csv
 test.png
+test.py
+__pycache__
+Makefile
