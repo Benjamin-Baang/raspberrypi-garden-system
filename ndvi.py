@@ -1,8 +1,21 @@
 import cv2
 import numpy as np
+from picamera import PiCamera
+import picamera.array
 
-# Load a specific image
-original = cv2.imread('/home/pi/project/park.png')
+# Instantiate a camera object
+camera = PiCamera()
+# Rotate image if needed
+cam.rotation = 180
+# Set resolution of image
+cam.resolution = (1920, 1080)
+
+
+# Save image as file (for testing purposes)
+cam.capture('test.png')
+# Load a specific image (for testing purposes)
+# original = cv2.imread('/home/pi/project/park.png')
+original = cv2.imread('test.png')
 
 
 ''' 
