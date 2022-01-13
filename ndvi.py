@@ -5,7 +5,7 @@ import picamera.array
 
 
 # Instantiate a camera object
-camera = PiCamera()
+cam = PiCamera()
 # Rotate image if needed
 cam.rotation = 180
 # Set resolution of image
@@ -78,7 +78,7 @@ def calc_ndvi(image):
     # Calculate NDVI value
     # by subtracting blue by red
     # then divided by the sum
-    ndvi = (b.astype(float) - r) / bottom
+    ndvi = (r.astype(float) - b) / bottom
     # Save NDVI array as .csv file
     # (warning - file size is about 32 MB)
     # np.savetxt("output.csv", ndvi, fmt="%.3f", delimiter=",")
