@@ -1,7 +1,6 @@
 bin/
 key.txt
 lib/
-main.py
 pyvenv.cfg
 share/
 contrasted.png
