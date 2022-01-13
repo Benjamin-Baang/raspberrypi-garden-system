@@ -86,16 +86,17 @@ def calc_ndvi(image):
     return ndvi
 
 
-display(original, 'Original')
-contrasted = contrast_stretch(original)
-display(contrasted, 'Contrasted original')
-# Create/Update contrasted image file
-cv2.imwrite('contrasted.png', contrasted)
-# Calculate NDVI value
-ndvi = calc_ndvi(contrasted)
-display(ndvi, 'NDVI')
-cv2.imwrite('ndvi.png', ndvi)
-# If image is too dark, increase contrast
-ndvi_contrasted = contrast_stretch(ndvi)
-display(ndvi_contrasted, 'NDVI Contrasted')
-cv2.imwrite('ndvi_contrasted.png', ndvi_contrasted)
+if __name__ == '__main__':
+	display(original, 'Original')
+	contrasted = contrast_stretch(original)
+	display(contrasted, 'Contrasted original')
+	# Create/Update contrasted image file
+	cv2.imwrite('contrasted.png', contrasted)
+	# Calculate NDVI value
+	ndvi = calc_ndvi(contrasted)
+	display(ndvi, 'NDVI')
+	cv2.imwrite('ndvi.png', ndvi)
+	# If image is too dark, increase contrast
+	ndvi_contrasted = contrast_stretch(ndvi)
+	display(ndvi_contrasted, 'NDVI Contrasted')
+	cv2.imwrite('ndvi_contrasted.png', ndvi_contrasted)
