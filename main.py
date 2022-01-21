@@ -15,22 +15,29 @@ import numpy as np
 from picamera import PiCamera
 import picamera.array
 import sqlite3
+import sensors
+import datetime
+import time
+
+unix=time.time()
+currentDateTime=str(datetime.datetime.fromtimestamp(unix).strftime('%Y-%m-%d %H:%M:%S'))
 
 
 '''
 Read all sensors except for camera
 '''
 def read_sensors():
-	# To be done later
-	return None
-
+#	return sensors.read_data()
+	return 70, 10, 3.3
 
 '''
 Take and read image from camera
 '''
 def camera_sensor():
+#	ndvi.take_picture()
+#	original = cv2.imread('test.png')
+# 	ndvi.display(original, 'Original')
 	original = cv2.imread('park.png')
-	ndvi.display(original, 'Original')
 	return original
 
 
@@ -38,10 +45,11 @@ def camera_sensor():
 Calculate average NDVI value
 '''
 def average_ndvi(image):
-	ndvi.calc_ndvi(image)
+	im = ndvi.contrast_stretch(image)
+	im = ndvi.calc_ndvi(im)
 	total_sum = 0
 	count = 0
-	for row in image:
+	for row in im:
 		for col in row:
 			total_sum = col
 			count += 1
@@ -59,14 +67,18 @@ def sys_activate(values):
 '''
 Update database with values
 '''
-def add_database():
-	with sqlite3.connect(r'test.db') as database:
+def update_database(soil_moisture, temperature, humidity, camera):
+#	with sqlite3.connect(r'sensors.db') as database:
+#		database.row_factory = sqlite3.Row
+#		cursor = database.cursor()
+#		cursor.execute("select * from sensors")
+#		rows = cursor.fetchall()
+#		for row in rows:
+#			print(row['soil'], row['temperature'], row['humidity'], row['camera'], row['DateTaken'])
+	with sqlite3.connect(r'sensors.db') as database:
 		database.row_factory = sqlite3.Row
 		cursor = database.cursor()
-		cursor.execute("select * from sensor_values")
-		rows = cursor.fetchall()
-		for row in rows:
-			print(row['temperature'], row['ndvi'])
+		cursor.execute("insert into sensors (soil, temperature, humidity, camera, DateTaken) VALUES(?, ?, ?, ?, ?)", (soil_moisture, temperature, humidity, camera, currentDateTime))
 	return None
 
 
@@ -74,10 +86,10 @@ def add_database():
 Main function
 '''
 def main():
-	read_sensors()
+	temperature, humidity, soil_moisture = read_sensors()
 	original = camera_sensor()
-	# avg = average_ndvi(original)
-	add_database()
+#	avg = average_ndvi(original)
+	update_database(soil_moisture, temperature, humidity, 50)
 
 
 if __name__ == '__main__':
