@@ -341,8 +341,8 @@ def camera_graph():
     plt.show()
 
 
-Button(ws, text="Automated",image = photoimage, compound = LEFT, command=create_window).pack(pady=5)
-Button(ws, text="Manual", image = photoimage1, compound = LEFT, command=subscribe).pack(pady=5)
+Button(ws, text="Automated",image = photoimage, compound = LEFT, command=subscribe).pack(pady=5)
+Button(ws, text="Manual", image = photoimage1, compound = LEFT, command=create_window).pack(pady=5)
 Button(ws, text="Timer",image = photoimage2, compound = LEFT,command=create_window2).pack(pady=5)
 Button(ws, text="Exit",image = photoimage3, compound = LEFT,command=ws.destroy).pack(pady=5)
 Button(ws, text=" Display Soil Graph",image=photoimage4,compound = LEFT, command=soil_graph).pack(pady=5)
