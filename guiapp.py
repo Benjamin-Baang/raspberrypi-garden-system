@@ -9,11 +9,54 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from dateutil import parser
 
-def create_window():
-    new_window=Toplevel()
-    new_window.geometry('450x210')
 
-    l1=Label(new_window, text="Temperature in F: ")
+def create_window():
+
+    def submit():
+        con=sqlite3.connect("sensors.db")
+        cur=con.cursor()
+
+        cur.execute("INSERT INTO user VALUES (:entry1,:entry2,:entry3,:entry4,:entry5)",
+            {
+            'entry1': entry1.get(),
+            'entry2': entry2.get(),
+            'entry3': entry3.get(),
+            'entry4': entry4.get(),
+            'entry5': entry5.get()
+            })
+
+        con.commit()
+        con.close()
+
+        entry1.delete(0,END)
+        entry2.delete(0,END)
+        entry3.delete(0,END)
+        entry4.delete(0,END)
+        entry5.delete(0,END)
+
+    #To display data
+    def query():
+        con=sqlite3.connect("sensors.db")
+        cur=con.cursor()
+
+        cur.execute("SELECT rowid,* FROM user")
+        r=cur.fetchall()
+        print(r)
+
+        show=''
+        for info in r:
+            show=show + str(info)+"\n"
+
+        c_label=Label(new_window,text=show).grid(row=7)
+
+
+        con.commit()
+        con.close()
+
+    new_window=Tk()
+    new_window.geometry('470x400')
+
+    l1=Label(new_window, text="Soil Moisture Value: ")
     l1.grid(row=0,column=0, padx=5, pady=10)
 
     entry1=Entry(new_window, bg="lightblue")
@@ -22,7 +65,7 @@ def create_window():
     # aButton1 = Button(new_window, text="Input a Num",command=subscribe)
     # aButton1.grid()
 
-    l2=Label(new_window, text="Humidity in %: ")
+    l2=Label(new_window, text="Temperature in F:")
     l2.grid(row=1,column=0, padx=5, pady=10)
 
     entry2=Entry(new_window, bg="lightblue")
@@ -31,7 +74,7 @@ def create_window():
     # aButton2 = Button(new_window, text="Input a Num",command=subscribe)
     # aButton2.grid()
 
-    l3=Label(new_window, text="Soil Moisture Value: ")
+    l3=Label(new_window, text="Humidity in %: ")
     l3.grid(row=2,column=0, padx=5, pady=10)
 
     entry3=Entry(new_window, bg="lightblue")
@@ -46,8 +89,19 @@ def create_window():
     entry4=Entry(new_window, bg="lightblue")
     entry4.grid(row=3,column=1)
 
-    aButton = Button(new_window, text="Submit",command=subscribe)
-    aButton.grid(row=4,column=1)
+    l5=Label(new_window, text="Please Recommend A State: ")
+    l5.grid(row=4,column=0, padx=5, pady=10)
+
+    entry5=Entry(new_window, bg="lightblue")
+    entry5.grid(row=4,column=1)
+
+    aButton = Button(new_window, text="Submit Record To Database",command=submit)
+    aButton.grid(row=5,column=1)
+
+    qButton = Button(new_window, text="Show User Input",command=query)
+    qButton.grid(row=6,column=1)
+    
+    
 
 def create_window2():
     new_window=Toplevel()
