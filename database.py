@@ -44,7 +44,17 @@ cur.execute("""CREATE TABLE IF NOT EXISTS sensors (
     #TIMESTAMP
     #Timestamp DATETIME DEFAULT CURRENT_TIMESTAMP  #this is how we create this
 
-
+ 
+#============================Added user Table to the same database file======================
+ cur.execute("""CREATE TABLE IF NOT EXISTS user (
+        soil REAL,
+        temperature REAL, 
+        humidity REAL, 
+        camera REAL,
+        State TEXT
+        )""")
+#============================================================================
+    
 #add data to table
 for record in data:
     cur.execute("INSERT INTO sensors VALUES (:soil,:temperature,:humidity,:camera,:DateTaken)", 
