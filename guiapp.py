@@ -9,6 +9,18 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from dateutil import parser
 
+#perform an action when called
+def subscribe():
+    #return messagebox.showinfo('Irrigation Controller','Thank you for subscribing!')
+    with sqlite3.connect(r'sensors.db') as con:
+        cur = con.cursor()
+        cur.execute('select * from user where id=?', (1,))
+        if cur.fetchall():
+            cur.execute("update user set State='automated' where id=?", (1,))
+        else:
+            cur.execute('insert into user (State) VALUES (?)', ('automated',)) 
+
+
 
 def create_window():
     with sqlite3.connect(r'sensors.db') as con:
@@ -286,10 +298,6 @@ def open():
 
 #==============================END of datadisplay=============================
 
-
-#perform an action when called
-def subscribe():
-    return messagebox.showinfo('Irrigation Controller','Thank you for subscribing!')
 
 
 def soil_graph():
