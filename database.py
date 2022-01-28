@@ -46,13 +46,22 @@ cur.execute("""CREATE TABLE IF NOT EXISTS sensors (
 
  
 #============================Added user Table to the same database file======================
- cur.execute("""CREATE TABLE IF NOT EXISTS user (
-        soil REAL,
-        temperature REAL, 
-        humidity REAL, 
-        camera REAL,
+cur.execute("""CREATE TABLE IF NOT EXISTS user (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
         State TEXT
         )""")
+cur.execute("select * from user")
+if cur.fetchone() is None:
+	cur.execute("INSERT INTO user (id, State) VALUES(?, ?)", (0, 'automatic'))
+
+cur.execute("""create table if not exists manual (
+    id integer primary key autoincrement,
+    soil real,
+    temperature real,
+    humidity real,
+    camera real
+    )""")
+
 #============================================================================
     
 #add data to table

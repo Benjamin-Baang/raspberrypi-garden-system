@@ -11,19 +11,31 @@ from dateutil import parser
 
 
 def create_window():
+    with sqlite3.connect(r'sensors.db') as con:
+        cur = con.cursor()
+        cur.execute('select * from user where id=?', (1,))
+        if cur.fetchall():
+            cur.execute("update user set State='manual' where id=?", (1,))
+        else:
+            cur.execute('insert into user (State) VALUES (?)', ('manual',)) 
+
 
     def submit():
         con=sqlite3.connect("sensors.db")
         cur=con.cursor()
-
-        cur.execute("INSERT INTO user VALUES (:entry1,:entry2,:entry3,:entry4,:entry5)",
-            {
-            'entry1': entry1.get(),
-            'entry2': entry2.get(),
-            'entry3': entry3.get(),
-            'entry4': entry4.get(),
-            'entry5': entry5.get()
-            })
+#		 cur.execute("INSERT INTO user VALUES (:entry1,:entry2,:entry3,:entry4,:entry5)",
+# 			{
+#            'entry1': entry1.get(),
+#            'entry2': entry2.get(),
+#            'entry3': entry3.get(),
+#            'entry4': entry4.get(),
+#            'entry5': entry5.get()
+#            })
+        cur.execute("SELECT * FROM manual WHERE id=1")
+        if cur.fetchall():
+            cur.execute("UPDATE manual SET soil=?, temperature=?, humidity=?, camera=? WHERE id=?", (entry1.get(), entry2.get(), entry3.get(), entry4.get(), 1))
+        else:
+            cur.execute("INSERT INTO manual (soil, temperature, humidity, camera) VALUES (?, ?, ?, ?)", (entry1.get(), entry2.get(), entry3.get(), entry4.get()))
 
         con.commit()
         con.close()
@@ -32,15 +44,16 @@ def create_window():
         entry2.delete(0,END)
         entry3.delete(0,END)
         entry4.delete(0,END)
-        entry5.delete(0,END)
+#        entry5.delete(0,END)
 
     #To display data
     def query():
         con=sqlite3.connect("sensors.db")
         cur=con.cursor()
 
-        cur.execute("SELECT rowid,* FROM user")
-        r=cur.fetchall()
+#        cur.execute("SELECT rowid,* FROM user")
+        cur.execute("select * from manual where id=?", (1,))
+        r=cur.fetchone()
         print(r)
 
         show=''
@@ -89,11 +102,11 @@ def create_window():
     entry4=Entry(new_window, bg="lightblue")
     entry4.grid(row=3,column=1)
 
-    l5=Label(new_window, text="Please Recommend A State: ")
-    l5.grid(row=4,column=0, padx=5, pady=10)
+ #   l5=Label(new_window, text="Please Recommend A State: ")
+ #   l5.grid(row=4,column=0, padx=5, pady=10)
 
-    entry5=Entry(new_window, bg="lightblue")
-    entry5.grid(row=4,column=1)
+ #   entry5=Entry(new_window, bg="lightblue")
+ #   entry5.grid(row=4,column=1)
 
     aButton = Button(new_window, text="Submit Record To Database",command=submit)
     aButton.grid(row=5,column=1)
