@@ -14,7 +14,9 @@ import cv2
 import numpy as np
 from picamera import PiCamera
 import picamera.array
-import sqlite3
+#import sqlite3
+import psycopg2, psycopg2.extras
+from config_db import config
 import sensors
 import datetime
 import time
@@ -71,11 +73,13 @@ def update_database(soil_moisture, temperature, humidity, camera):
 #		rows = cursor.fetchall()
 #		for row in rows:
 #			print(row['soil'], row['temperature'], row['humidity'], row['camera'], row['DateTaken'])
-	with sqlite3.connect(r'sensors.db') as database:
-		database.row_factory = sqlite3.Row
-		cursor = database.cursor()
-		cursor.execute("insert into sensors (soil, temperature, humidity, camera, DateTaken) VALUES(?, ?, ?, ?, ?)", (soil_moisture, temperature, humidity, camera, currentDateTime))
-	return None
+#	with sqlite3.connect(r'sensors.db') as database:
+    with psycopg2.connect(**config()) as database:
+#		database.row_factory = sqlite3.Row
+        cursor = database.cursor()
+#		cursor.execute("insert into sensors (soil, temperature, humidity, camera, DateTaken) VALUES(?, ?, ?, ?, ?)", (soil_moisture, temperature, humidity, camera, currentDateTime))
+        cursor.execute("insert into sensors (soil, temperature, humidity, camera, DateTaken) VALUES(%s, %s, %s, %s, %s)", (soil_moisture, temperature, humidity, camera, currentDateTime))
+    return None
 
 
 '''
@@ -96,16 +100,21 @@ def main():
         soil_moisture = round(random.uniform(1, 10), 1)
         avg = round(random.uniform(0, 1), 2)
         update_database(soil_moisture, temperature, humidity, avg)
-        with sqlite3.connect(r'sensors.db') as db:
-            db.row_factory = sqlite3.Row
-            cursor = db.cursor()
-            cursor.execute('select * from user where id=?', (1,))
+#        with sqlite3.connect(r'sensors.db') as db:
+#            db.row_factory = sqlite3.Row
+#            cursor = db.cursor()
+#            cursor.execute('select * from user where id=?', (1,))
+#            user = cursor.fetchone()
+        with psycopg2.connect(**config()) as db:
+            cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            cursor.execute('select * from app_user where id=%s', (1,))
             user = cursor.fetchone()
-            if user['State'] == 'automated':
+            print(user)
+            if user[1] == 'automated':
                 context.set_state(Automated())
-            elif user['State'] == 'manual':
+            elif user[1] == 'manual':
                 context.set_state(Manual())
-            elif user['State'] == 'scheduler':
+            elif user[1] == 'scheduler':
                 context.set_state(Scheduler())
         s_flag = context.request()
         print(s_flag)
