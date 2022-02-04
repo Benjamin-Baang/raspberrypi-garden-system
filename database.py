@@ -1,4 +1,6 @@
-import sqlite3
+# import sqlite3
+import psycopg2
+from config_db import config
 import datetime
 import time
 import matplotlib.pyplot as plt
@@ -30,11 +32,12 @@ data=[
 #  ]
 
 #create a  database or connect to one 
-con=sqlite3.connect("sensors.db")
+#con=sqlite3.connect("sensors.db")
+con=psycopg2.connect(**config())
 #create a cursor
 cur=con.cursor()
 
-cur.execute("""CREATE TABLE IF NOT EXISTS sensors (
+cur.execute("""create table if not exists sensors (
     soil REAL,
     temperature REAL, 
     humidity REAL, 
@@ -46,16 +49,16 @@ cur.execute("""CREATE TABLE IF NOT EXISTS sensors (
 
  
 #============================Added user Table to the same database file======================
-cur.execute("""CREATE TABLE IF NOT EXISTS user (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-        State TEXT
-        )""")
-cur.execute("select * from user")
+cur.execute('''create table if not exists app_user (
+		id serial primary key,
+        State text
+        )''')
+cur.execute("select * from app_user")
 if cur.fetchone() is None:
-	cur.execute("INSERT INTO user (id, State) VALUES(?, ?)", (0, 'automatic'))
+	cur.execute("INSERT INTO app_user (id, State) VALUES(%s, %s)", (0, 'automatic'))
 
 cur.execute("""create table if not exists manual (
-    id integer primary key autoincrement,
+    id serial primary key,
     soil real,
     temperature real,
     humidity real,
@@ -66,17 +69,17 @@ cur.execute("""create table if not exists manual (
     
 #add data to table
 for record in data:
-    cur.execute("INSERT INTO sensors VALUES (:soil,:temperature,:humidity,:camera,:DateTaken)", 
-    {
-    'soil': record[0],
-    'temperature': record[1],
-    'humidity': record[2],
-    'camera': record[3],
-    'DateTaken': record[4]
-    }
-    )
-    # cur.execute("INSERT INTO sensor (soil,temperature,humidity,camera,DateTaken) VALUES (?,?,?,?,?)", 
-    #     (soil,temperature,humidity,camera,DateTaken))
+    # cur.execute("INSERT INTO sensors VALUES (:soil,:temperature,:humidity,:camera,:DateTaken)", 
+    # {
+    # 'soil': record[0],
+    # 'temperature': record[1],
+    # 'humidity': record[2],
+    # 'camera': record[3],
+    # 'DateTaken': record[4]
+    # }
+    # )
+    cur.execute("INSERT INTO sensors (soil,temperature,humidity,camera,DateTaken) VALUES (%s,%s,%s,%s,%s)", 
+        (record[0],record[1],record[2],record[3],record[4]))
 
     #print("data successfully added  \n")
 

@@ -3,7 +3,9 @@ from tkinter import messagebox
 from time import *
 import tkinter.ttk as ttk
 #import guiforData
-import sqlite3
+#import sqlite3
+import psycopg2
+from config_db import config
 import database
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
@@ -12,29 +14,42 @@ from dateutil import parser
 #perform an action when called
 def subscribe():
     #return messagebox.showinfo('Irrigation Controller','Thank you for subscribing!')
-    with sqlite3.connect(r'sensors.db') as con:
+#    with sqlite3.connect(r'sensors.db') as con:
+#        cur = con.cursor()
+#        cur.execute('select * from user where id=?', (1,))
+#        if cur.fetchall():
+#            cur.execute("update user set State='automated' where id=?", (1,))
+#        else:
+#            cur.execute('insert into user (State) VALUES (?)', ('automated',)) 
+    with psycopg2.connect(**config()) as con:
         cur = con.cursor()
-        cur.execute('select * from user where id=?', (1,))
+        cur.execute('select * from app_user where id=%s', (1,))
         if cur.fetchall():
-            cur.execute("update user set State='automated' where id=?", (1,))
+            cur.execute('update app_user set State=%s where id=%s', ('automated', '1'))
         else:
-            cur.execute('insert into user (State) VALUES (?)', ('automated',)) 
-
+            cur.execute('insert into app_user (State) VALUES (%s)', ('automated',)) 
 
 
 def create_window():
-    with sqlite3.connect(r'sensors.db') as con:
+    # with sqlite3.connect(r'sensors.db') as con:
+    #     cur = con.cursor()
+    #     cur.execute('select * from user where id=?', (1,))
+    #     if cur.fetchall():
+    #         cur.execute("update user set State='manual' where id=?", (1,))
+    #     else:
+    #         cur.execute('insert into user (State) VALUES (?)', ('manual',)) 
+    with psycopg2.connect(**config()) as con:
         cur = con.cursor()
-        cur.execute('select * from user where id=?', (1,))
+        cur.execute('select * from app_user where id=%s', (1,))
         if cur.fetchall():
-            cur.execute("update user set State='manual' where id=?", (1,))
+            cur.execute('update app_user set State=%s where id=%s', ('manual', 1))
         else:
-            cur.execute('insert into user (State) VALUES (?)', ('manual',)) 
+            cur.execute('insert into app_user (State) VALUES (%s)', ('manual',)) 
 
 
     def submit():
-        con=sqlite3.connect("sensors.db")
-        cur=con.cursor()
+        # con=sqlite3.connect("sensors.db")
+        # cur=con.cursor()
 #		 cur.execute("INSERT INTO user VALUES (:entry1,:entry2,:entry3,:entry4,:entry5)",
 # 			{
 #            'entry1': entry1.get(),
@@ -43,14 +58,21 @@ def create_window():
 #            'entry4': entry4.get(),
 #            'entry5': entry5.get()
 #            })
-        cur.execute("SELECT * FROM manual WHERE id=1")
-        if cur.fetchall():
-            cur.execute("UPDATE manual SET soil=?, temperature=?, humidity=?, camera=? WHERE id=?", (entry1.get(), entry2.get(), entry3.get(), entry4.get(), 1))
-        else:
-            cur.execute("INSERT INTO manual (soil, temperature, humidity, camera) VALUES (?, ?, ?, ?)", (entry1.get(), entry2.get(), entry3.get(), entry4.get()))
+        # cur.execute("SELECT * FROM manual WHERE id=1")
+        # if cur.fetchall():
+        #     cur.execute("UPDATE manual SET soil=?, temperature=?, humidity=?, camera=? WHERE id=?", (entry1.get(), entry2.get(), entry3.get(), entry4.get(), 1))
+        # else:
+        #     cur.execute("INSERT INTO manual (soil, temperature, humidity, camera) VALUES (?, ?, ?, ?)", (entry1.get(), entry2.get(), entry3.get(), entry4.get()))
 
-        con.commit()
-        con.close()
+        # con.commit()
+        # con.close()
+        with psycopg2.connect(**config()) as con:
+            cur = con.cursor()
+            cur.execute('select * from manual where id=%s', (1,))
+            if cur.fetchall():
+                cur.execute("update manual set soil=%s, temperature=%s, humidity=%s, camera=%s where id=%s", (entry1.get(), entry2.get(), entry3.get(), entry4.get(), 1))
+            else:
+                cur.execute("insert into manual (soil, temperature, humidity, camera) VALUES (%s, %s, %s, %s)", (entry1.get(), entry2.get(), entry3.get(), entry4.get()))
 
         entry1.delete(0,END)
         entry2.delete(0,END)
@@ -60,23 +82,25 @@ def create_window():
 
     #To display data
     def query():
-        con=sqlite3.connect("sensors.db")
-        cur=con.cursor()
+#         con=sqlite3.connect("sensors.db")
+#         cur=con.cursor()
 
-#        cur.execute("SELECT rowid,* FROM user")
-        cur.execute("select * from manual where id=?", (1,))
-        r=cur.fetchone()
-        print(r)
+# #        cur.execute("SELECT rowid,* FROM user")
+#         cur.execute("select * from manual where id=?", (1,))
+#         r=cur.fetchone()
+#         print(r)
+        with psycopg2.connect(**config()) as con:
+            cur = con.cursor()
+            cur.execute('select * from manual where id=%s', (1,))
+            r=cur.fetchone()
+            show=''
+            for info in r:
+                show=show + str(info)+"\n"
+            c_label=Label(new_window,text=show).grid(row=7)
+#         con.commit()
+#         con.close()
+        
 
-        show=''
-        for info in r:
-            show=show + str(info)+"\n"
-
-        c_label=Label(new_window,text=show).grid(row=7)
-
-
-        con.commit()
-        con.close()
 
     new_window=Tk()
     new_window.geometry('470x400')
@@ -184,10 +208,14 @@ def open():
 
 
     def query_database():
-        con=sqlite3.connect("sensors.db")
-        cur=con.cursor()
-        cur.execute("SELECT * FROM sensors")
-        records=cur.fetchall()  #fetching from the database and add to database
+        # con=sqlite3.connect("sensors.db")
+        # cur=con.cursor()
+        # cur.execute("SELECT * FROM sensors")
+        # records=cur.fetchall()  #fetching from the database and add to database
+        with psycopg2.connect(**config()) as con:
+            cur=con.cursor()
+            cur.execute('select * from sensors')
+            records=cur.fetchall()
     
         #add data to screen
         global inc
@@ -204,10 +232,14 @@ def open():
         con.close()
 
     def data_query():
-        con=sqlite3.connect("sensors.db")
-        cur=con.cursor()
-        cur.execute("SELECT * FROM sensors WHERE soil=80")
-        records=cur.fetchall()
+        # con=sqlite3.connect("sensors.db")
+        # cur=con.cursor()
+        # cur.execute("SELECT * FROM sensors WHERE soil=80")
+        # records=cur.fetchall()
+        with psycopg2.connect(**config()) as con:
+            cur=con.cursor()
+            cur.execute('select * from sensors where soil=80')
+            records=cur.fetchall()
     #add data to screen
         global inc
         inc=0
@@ -301,10 +333,14 @@ def open():
 
 
 def soil_graph():
-    con=sqlite3.connect("sensors.db")
-    cur=con.cursor()
-    cur.execute('Select DateTaken, soil From sensors')
-    data=cur.fetchall()
+    # con=sqlite3.connect("sensors.db")
+    # cur=con.cursor()
+    # cur.execute('Select DateTaken, soil From sensors')
+    # data=cur.fetchall()
+    with psycopg2.connect(**config()) as con:
+        cur=con.cursor()
+        cur.execute('select DateTaken, soil from sensors')
+        data=cur.fetchall()
 
     dates=[]
     values=[]
@@ -316,10 +352,14 @@ def soil_graph():
     plt.plot_date(dates,values,'-')
     plt.show()
 def temperature_graph():
-    con=sqlite3.connect("sensors.db")
-    cur=con.cursor()
-    cur.execute('Select DateTaken, temperature From sensors')
-    data=cur.fetchall()
+    # con=sqlite3.connect("sensors.db")
+    # cur=con.cursor()
+    # cur.execute('Select DateTaken, temperature From sensors')
+    # data=cur.fetchall()
+    with psycopg2.connect(**config()) as con:
+        cur=con.cursor()
+        cur.execute('select DateTaken, temperature from sensors')
+        data=cur.fetchall()
 
     dates=[]
     values=[]
@@ -331,10 +371,14 @@ def temperature_graph():
     plt.plot_date(dates,values,'-')
     plt.show()
 def humidity_graph():
-    con=sqlite3.connect("sensors.db")
-    cur=con.cursor()
-    cur.execute('Select DateTaken, humidity From sensors')
-    data=cur.fetchall()
+    # con=sqlite3.connect("sensors.db")
+    # cur=con.cursor()
+    # cur.execute('Select DateTaken, humidity From sensors')
+    # data=cur.fetchall()
+    with psycopg2.connect(**config()) as con:
+        cur=con.cursor()
+        cur.execute('select DateTaken, humidity from sensors')
+        data=cur.fetchall()
 
     dates=[]
     values=[]
@@ -346,10 +390,14 @@ def humidity_graph():
     plt.plot_date(dates,values,'-')
     plt.show()
 def camera_graph():
-    con=sqlite3.connect("sensors.db")
-    cur=con.cursor()
-    cur.execute('Select DateTaken, camera From sensors')
-    data=cur.fetchall()
+    # con=sqlite3.connect("sensors.db")
+    # cur=con.cursor()
+    # cur.execute('Select DateTaken, camera From sensors')
+    # data=cur.fetchall()
+    with psycopg2.connect(**config()) as con:
+        cur=con.cursor()
+        cur.execute('select DateTaken, camera from sensors')
+        data=cur.fetchall()
 
     dates=[]
     values=[]
