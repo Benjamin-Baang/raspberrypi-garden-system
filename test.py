@@ -42,51 +42,56 @@ class Automated(State):
 #        print("Automated handles request.")
 #        print("Automated changes state to Manual.")
 #        self.context.set_state(Manual())
-        with sql.connect(f'sensors.db') as db:
-            db.row_factory = sql.Row
-            cursor = db.cursor()
-            cursor.execute("select * from user where id=?", (0,))
-            default = cursor.fetchone()    
-            print(f"Soil: {default['soil']}\n"
-                f"Temperature: {default['temperature']}\n"
-                f"Humidity: {default['humidity']}\n"
-                f"Camera: {default['camera']}\n")
-            if values['soil'] < default['soil'] and default['camera'] < user['camera']:
-                return True
-            elif values['temperature'] < default['temperature'] and values['humidity'] < default['humidity']:
-                return True
-            else:
-                return False
+#        with sql.connect(f'sensors.db') as db:
+#        with psycopg2.connect(*config()) as db:
+#            db.row_factory = sql.Row
+#            cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+#            cursor.execute("select * from user where id=?", (0,))
+#            cursor.execute("selet * from app_user where id=%s", (0,))
+#            default = cursor.fetchone()    
+#            print(f"Soil: {default[1]}\n"
+#                f"Temperature: {default[2]}\n"
+#                f"Humidity: {default[3]}\n"
+#                f"Camera: {default[4]}\n")
+#            if values['soil'] < default['soil'] and default['camera'] < user['camera']:
+#                return True
+#            elif values['temperature'] < default['temperature'] and values['humidity'] < default['humidity']:
+#                return True
+#            else:
+#                return False
+            return True
            
 
-        print(f"Soil: {values['soil']}\n"
-            f"Temperature: {values['temperature']}\n"
-            f"Humidity: {values['humidity']}\n"
-            f"Camera: {values['camera']}\n")
+#        print(f"Soil: {values['soil']}\n"
+            # f"Temperature: {values['temperature']}\n"
+            # f"Humidity: {values['humidity']}\n"
+            # f"Camera: {values['camera']}\n")
 
 
 class Manual(State):
     def handle(self) -> None:
-        with sql.connect(f'sensors.db') as db:
-            db.row_factory = sql.Row
-            cursor = db.cursor()
-            cursor.execute("select * from manual where id=?", (1,))
+#        with sql.connect(f'sensors.db') as db:
+        with psycopg2.connect(**config()) as db:
+#            db.row_factory = sql.Row
+            cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            # cursor.execute("select * from manual where id=?", (1,))
+            cursor.execute('select * from manual where id=%s', (1,))
             user = cursor.fetchone()
             cursor.execute("select * from sensors order by DateTaken desc limit 1")
             values = cursor.fetchone()
             print("User inputs...")
-            print(f"Soil: {user['soil']}\n"
-                f"Temperature: {user['temperature']}\n"
-                f"Humidity: {user['humidity']}\n"
-                f"Camera: {user['camera']}\n")
+            print(f"Soil: {user[1]}\n"
+                f"Temperature: {user[2]}\n"
+                f"Humidity: {user[3]}\n"
+                f"Camera: {user[4]}\n")
             print("Sensor inputs...")
-            print(f"Soil: {values['soil']}\n"
-                f"Temperature: {values['temperature']}\n"
-                f"Humidity: {values['humidity']}\n"
-                f"Camera: {values['camera']}\n")
-            if values['soil'] < user['soil'] - 1.5 and values['camera'] < user['camera']:
+            print(f"Soil: {values[1]}\n"
+                f"Temperature: {values[2]}\n"
+                f"Humidity: {values[3]}\n"
+                f"Camera: {values[4]}\n")
+            if values[1] < user[1] - 1.5 and values[4] < user[4]:
                 return True
-            elif values['temperature'] > user['temperature'] + 5 and values['humidity'] < user['humidity'] - 5:
+            elif values[2] > user[2] + 5 and values[3] < user[3] - 5:
                 return True
             else:
                 return False
@@ -102,18 +107,20 @@ class Scheduler(State):
 if __name__ == "__main__":
     # The client code.
 
-    context = Context(Automated()) 
+    context = Context(Manual()) 
 
-    with sql.connect(r'sensors.db') as db:
-        db.row_factory = sql.Row
-        cursor = db.cursor()
-        cursor.execute("select * from user where id=?", (1,))
+#    with sql.connect(r'sensors.db') as db:
+    with psycopg2.connect(**config()) as db:
+#        db.row_factory = sql.Row
+        cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor.execute("select * from app_user where id=%s", (1,))
         user = cursor.fetchone()
-        if user['State'] == 'automated':
+        print(user)
+        if user[1] == 'automated':
             context.set_state(Automated())
-        elif user['State'] == 'manual':
+        elif user[1] == 'manual':
             context.set_state(Manual())
-        elif user['State'] == 'scheduler':
+        elif user[1] == 'scheduler':
             context.set_state(Scheduler())
 
     print(context.request())
