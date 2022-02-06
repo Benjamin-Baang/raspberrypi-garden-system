@@ -12,3 +12,4 @@ test.py
 __pycache__
 Makefile
 test.db
+database.ini
