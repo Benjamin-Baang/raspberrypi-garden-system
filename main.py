@@ -109,7 +109,6 @@ def main():
             cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
             cursor.execute('select * from app_user where id=%s', (1,))
             user = cursor.fetchone()
-            print(user)
             if user[1] == 'automated':
                 context.set_state(Automated())
             elif user[1] == 'manual':
@@ -122,7 +121,7 @@ def main():
             print('System is activated!')
         else:
             print('System is turned off...')
-        time.sleep(30)
+        time.sleep(10)
 
 
 if __name__ == '__main__':

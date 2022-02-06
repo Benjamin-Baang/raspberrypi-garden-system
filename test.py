@@ -85,13 +85,13 @@ class Manual(State):
                 f"Humidity: {user[3]}\n"
                 f"Camera: {user[4]}\n")
             print("Sensor inputs...")
-            print(f"Soil: {values[1]}\n"
-                f"Temperature: {values[2]}\n"
-                f"Humidity: {values[3]}\n"
-                f"Camera: {values[4]}\n")
-            if values[1] < user[1] - 1.5 and values[4] < user[4]:
+            print(f"Soil: {values[0]}\n"
+                f"Temperature: {values[1]}\n"
+                f"Humidity: {values[2]}\n"
+                f"Camera: {values[3]}\n")
+            if values[0] < user[1] - 1.5 and values[3] < user[4]:
                 return True
-            elif values[2] > user[2] + 5 and values[3] < user[3] - 5:
+            elif values[1] > user[2] + 5 and values[2] < user[3] - 5:
                 return True
             else:
                 return False
