@@ -177,7 +177,7 @@ def create_window2():
 
 ws = Tk()
 ws.title('Irrigation Controller')
-ws.geometry('680x680')
+ws.geometry('680x900')
 #ws['bg']='#5d8f90'
 ws['bg']='#5b8f90'
 
@@ -238,7 +238,7 @@ def open():
         # records=cur.fetchall()
         with psycopg2.connect(**config()) as con:
             cur=con.cursor()
-            cur.execute('select * from sensors where soil=80')
+            cur.execute("select * from sensors where DateTaken < timestamp '2022-03-15 00:00:00'")
             records=cur.fetchall()
     #add data to screen
         global inc

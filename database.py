@@ -16,13 +16,13 @@ currentDateTime=str(datetime.datetime.fromtimestamp(unix).strftime('%Y-%m-%d %H:
 #reading_time=int(time.time())
 
 #Add Data
-data=[
-    ["80", "45.7", "72.6", "0.66", currentDateTime],
-    ["60", "51.2", "87.8", "0.55",currentDateTime],
-    ["90", "71.2", "76.3", "1.0",currentDateTime],
+# data=[
+    # ["80", "45.7", "72.6", "0.66", currentDateTime],
+    # ["60", "51.2", "87.8", "0.55",currentDateTime],
+    # ["90", "71.2", "76.3", "1.0",currentDateTime],
     # ["100", "81.0", "49.8", "0.33",currentDateTime],
     # ["100", "81.0", "49.8", "0.33",currentDateTime]
- ]
+#  ]
 # value1=random.random()
 # value2=random.random()
 # value3=random.random()
@@ -68,7 +68,7 @@ cur.execute("""create table if not exists manual (
 #============================================================================
     
 #add data to table
-for record in data:
+# for record in data:
     # cur.execute("INSERT INTO sensors VALUES (:soil,:temperature,:humidity,:camera,:DateTaken)", 
     # {
     # 'soil': record[0],
@@ -78,8 +78,8 @@ for record in data:
     # 'DateTaken': record[4]
     # }
     # )
-    cur.execute("INSERT INTO sensors (soil,temperature,humidity,camera,DateTaken) VALUES (%s,%s,%s,%s,%s)", 
-        (record[0],record[1],record[2],record[3],record[4]))
+    # cur.execute("INSERT INTO sensors (soil,temperature,humidity,camera,DateTaken) VALUES (%s,%s,%s,%s,%s)", 
+    #     (record[0],record[1],record[2],record[3],record[4]))
 
     #print("data successfully added  \n")
 
