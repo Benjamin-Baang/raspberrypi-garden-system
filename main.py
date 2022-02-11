@@ -1,127 +1,145 @@
-#####    Pseudocode    #####
-# Read sensor values
-# Convert sensor readings to acceptable values
-# Take picture with camera
-# Calculate average NDVI value(s) from picture
-# Use values to determine activation
-# Send values to database
-
-##### TODO Later #####
-# Incorporate different modes of operations
-
 import ndvi
 import cv2
 import numpy as np
 from picamera import PiCamera
 import picamera.array
-#import sqlite3
 import psycopg2, psycopg2.extras
 from config_db import config
 import sensors
 import datetime
 import time
-import test
-from test import Automated, Manual, Scheduler
+import states
+from states import Automated, Manual, Scheduler, Context
 import random
 
-unix=time.time()
-#currentDateTime=str(datetime.datetime.fromtimestamp(unix).strftime('%Y-%m-%d %H:%M:%S'))
-#currentDateTime=str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-
-
-'''
-Read all sensors except for camera
-'''
+class Task:
+    def __init__(self):
+        self.duration = 0
+        self.elapsed_time = 0
+        self.funct = None
+          
 def read_sensors():
+    '''
+    Read all sensors except for camera
+    '''
 #	return sensors.read_data()
-	return 70, 10, 3.3
+    return 70, 10, 3.3
 
-'''
-Take and read image from camera
-'''
+
 def camera_sensor():
+    '''
+    Take and read image from camera
+    '''
 #	ndvi.take_picture()
-	original = cv2.imread('test.png')
+    original = cv2.imread('test.png')
 #	ndvi.display(original, 'Original')
 #	original = cv2.imread('park.png')
-	return original
+    return original
 
 
-'''
-Calculate average NDVI value
-'''
 def average_ndvi(image):
-	im = ndvi.contrast_stretch(image)
-	im = ndvi.calc_ndvi(im)
-	total_sum = 0
-	count = 0
-	for row in im:
-		for col in row:
-			total_sum = col
-			count += 1
-	return total_sum / count # Value does not matter right now
+    '''
+    Calculate average NDVI value
+    '''
+    im = ndvi.contrast_stretch(image)
+    im = ndvi.calc_ndvi(im)
+    total_sum = 0
+    count = 0
+    for row in im:
+        for col in row:
+            total_sum = col
+            count += 1
+    return total_sum / count # Value does not matter right now
 
 
-'''
-Update database with values
-'''
 def update_database(soil_moisture, temperature, humidity, camera):
-#	with sqlite3.connect(r'sensors.db') as database:
-#		database.row_factory = sqlite3.Row
-#		cursor = database.cursor()
-#		cursor.execute("select * from sensors")
-#		rows = cursor.fetchall()
-#		for row in rows:
-#			print(row['soil'], row['temperature'], row['humidity'], row['camera'], row['DateTaken'])
-#	with sqlite3.connect(r'sensors.db') as database:
+    '''
+    Update database with values
+    '''
     with psycopg2.connect(**config()) as database:
-#		database.row_factory = sqlite3.Row
         cursor = database.cursor()
-#		cursor.execute("insert into sensors (soil, temperature, humidity, camera, DateTaken) VALUES(?, ?, ?, ?, ?)", (soil_moisture, temperature, humidity, camera, currentDateTime))
         cursor.execute("insert into sensors (soil, temperature, humidity, camera, DateTaken) VALUES(%s, %s, %s, %s, %s)", (soil_moisture, temperature, humidity, camera, currentDateTime))
     return None
 
+def process_sensors(context: Context):
+    global currentDateTime
+    currentDateTime=str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    random.seed()
+    temperature = random.randint(50, 100)
+    humidity = random.randint(30, 80)
+    soil_moisture = round(random.uniform(1, 10), 1)
+    avg = round(random.uniform(0, 1), 2)
+    update_database(soil_moisture, temperature, humidity, avg)
+    
+def app_listen(context: Context):
+    with psycopg2.connect(**config()) as db:
+        cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor.execute('select * from app_user where id=%s', (1,))
+        user = cursor.fetchone()
+        if user[1] == 'automated':
+            context.set_state(Automated())
+        elif user[1] == 'manual':
+            context.set_state(Manual())
+        elif user[1] == 'scheduler':
+            context.set_state(Scheduler())
+    s_flag = context.request()
+    print(s_flag)
+    if s_flag:
+        print('System is activated!')
+    else:
+        print('System is turned off...')
 
-'''
-Main function
-'''
 def main():
-    context = test.Context(Automated())
-    while (1):
-        global currentDateTime
-        currentDateTime=str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-	    #temperature, humidity, soil_moisture = read_sensors()
-	    #original = camera_sensor()
-	    #avg = average_ndvi(original)
-	    #print(avg)
-        random.seed()
-        temperature = random.randint(50, 100)
-        humidity = random.randint(30, 80)
-        soil_moisture = round(random.uniform(1, 10), 1)
-        avg = round(random.uniform(0, 1), 2)
-        update_database(soil_moisture, temperature, humidity, avg)
-#        with sqlite3.connect(r'sensors.db') as db:
-#            db.row_factory = sqlite3.Row
-#            cursor = db.cursor()
-#            cursor.execute('select * from user where id=?', (1,))
-#            user = cursor.fetchone()
-        with psycopg2.connect(**config()) as db:
-            cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
-            cursor.execute('select * from app_user where id=%s', (1,))
-            user = cursor.fetchone()
-            if user[1] == 'automated':
-                context.set_state(Automated())
-            elif user[1] == 'manual':
-                context.set_state(Manual())
-            elif user[1] == 'scheduler':
-                context.set_state(Scheduler())
-        s_flag = context.request()
-        print(s_flag)
-        if s_flag:
-            print('System is activated!')
-        else:
-            print('System is turned off...')
-        time.sleep(10)
+    '''
+    Main function
+    '''
+    task1 = Task()
+    task1.duration = 1
+    task1.funct = app_listen
+    task2 = Task()
+    task2.duration = 10
+    task2.funct = process_sensors
+    
+    tasks = [task1, task2]
+    
+    context = Context(Automated())
+    
+    while True:
+        for task in tasks:
+            if task.elapsed_time >= task.duration - 1:
+                task.funct(context)
+                task.elapsed_time = 0
+            else:
+                task.elapsed_time += 1
+        time.sleep(1)
+    
+    
+    # while (1):
+    #     global currentDateTime
+    #     currentDateTime=str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    #     random.seed()
+    #     temperature = random.randint(50, 100)
+    #     humidity = random.randint(30, 80)
+    #     soil_moisture = round(random.uniform(1, 10), 1)
+    #     avg = round(random.uniform(0, 1), 2)
+    #     update_database(soil_moisture, temperature, humidity, avg)
+    #     with psycopg2.connect(**config()) as db:
+    #         cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    #         cursor.execute('select * from app_user where id=%s', (1,))
+    #         user = cursor.fetchone()
+    #         if user[1] == 'automated':
+    #             context.set_state(Automated())
+    #         elif user[1] == 'manual':
+    #             context.set_state(Manual())
+    #         elif user[1] == 'scheduler':
+    #             context.set_state(Scheduler())
+    #     s_flag = context.request()
+    #     print(s_flag)
+    #     if s_flag:
+    #         print('System is activated!')
+    #     else:
+    #         print('System is turned off...')
+    #     time.sleep(10)
 
 
 if __name__ == '__main__':
