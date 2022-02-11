@@ -85,20 +85,22 @@ def app_listen(context: Context):
     s_flag = context.request()
     print(s_flag)
     if s_flag:
-        print('System is activated!')
+        print('System is activated!\n')
     else:
-        print('System is turned off...')
+        print('System is turned off...\n')
 
 def main():
     '''
     Main function
     '''
     task1 = Task()
-    task1.duration = 1
-    task1.funct = app_listen
+    task1.duration = 10
+    task1.elapsed_time = 10
+    task1.funct = process_sensors
     task2 = Task()
-    task2.duration = 10
-    task2.funct = process_sensors
+    task2.duration = 1
+    task2.elapsed_time = 0
+    task2.funct = app_listen
     
     tasks = [task1, task2]
     
