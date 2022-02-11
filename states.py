@@ -58,7 +58,7 @@ class Automated(State):
 #                return True
 #            else:
 #                return False
-            print("Automated...")
+            print("Automated...\n")
             return True
            
 
