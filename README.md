@@ -44,7 +44,7 @@ If not installed, use this command. \
 ```sudo pip install numpy```
 
 8. Install the opencv module. This is the primary module for image processing. \
-```sudo apt-get install opencv-python```
+```sudo pip install opencv-python```
 
 9. Test if opencv works. \
 ```python -c "import cv2"```
