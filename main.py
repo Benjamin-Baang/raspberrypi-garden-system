@@ -8,14 +8,16 @@ from config_db import config
 import sensors
 import datetime
 import time
-import test
-from test import Automated, Manual, Scheduler
+import states
+from states import Automated, Manual, Scheduler, Context
 import random
 
-
-unix=time.time()
-
-
+class Task:
+    def __init__(self):
+        self.duration = 0
+        self.elapsed_time = 0
+        self.funct = None
+          
 def read_sensors():
     '''
     Read all sensors except for camera
@@ -59,38 +61,85 @@ def update_database(soil_moisture, temperature, humidity, camera):
         cursor.execute("insert into sensors (soil, temperature, humidity, camera, DateTaken) VALUES(%s, %s, %s, %s, %s)", (soil_moisture, temperature, humidity, camera, currentDateTime))
     return None
 
+def process_sensors(context: Context):
+    global currentDateTime
+    currentDateTime=str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    random.seed()
+    temperature = random.randint(50, 100)
+    humidity = random.randint(30, 80)
+    soil_moisture = round(random.uniform(1, 10), 1)
+    avg = round(random.uniform(0, 1), 2)
+    update_database(soil_moisture, temperature, humidity, avg)
+    
+def app_listen(context: Context):
+    with psycopg2.connect(**config()) as db:
+        cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cursor.execute('select * from app_user where id=%s', (1,))
+        user = cursor.fetchone()
+        if user[1] == 'automated':
+            context.set_state(Automated())
+        elif user[1] == 'manual':
+            context.set_state(Manual())
+        elif user[1] == 'scheduler':
+            context.set_state(Scheduler())
+    s_flag = context.request()
+    print(s_flag)
+    if s_flag:
+        print('System is activated!')
+    else:
+        print('System is turned off...')
 
 def main():
     '''
     Main function
     '''
-    context = test.Context(Automated())
-    while (1):
-        global currentDateTime
-        currentDateTime=str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-        random.seed()
-        temperature = random.randint(50, 100)
-        humidity = random.randint(30, 80)
-        soil_moisture = round(random.uniform(1, 10), 1)
-        avg = round(random.uniform(0, 1), 2)
-        update_database(soil_moisture, temperature, humidity, avg)
-        with psycopg2.connect(**config()) as db:
-            cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
-            cursor.execute('select * from app_user where id=%s', (1,))
-            user = cursor.fetchone()
-            if user[1] == 'automated':
-                context.set_state(Automated())
-            elif user[1] == 'manual':
-                context.set_state(Manual())
-            elif user[1] == 'scheduler':
-                context.set_state(Scheduler())
-        s_flag = context.request()
-        print(s_flag)
-        if s_flag:
-            print('System is activated!')
-        else:
-            print('System is turned off...')
-        time.sleep(10)
+    task1 = Task()
+    task1.duration = 1
+    task1.funct = app_listen
+    task2 = Task()
+    task2.duration = 10
+    task2.funct = process_sensors
+    
+    tasks = [task1, task2]
+    
+    context = Context(Automated())
+    
+    while True:
+        for task in tasks:
+            if task.elapsed_time >= task.duration - 1:
+                task.funct(context)
+                task.elapsed_time = 0
+            else:
+                task.elapsed_time += 1
+        time.sleep(1)
+    
+    
+    # while (1):
+    #     global currentDateTime
+    #     currentDateTime=str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    #     random.seed()
+    #     temperature = random.randint(50, 100)
+    #     humidity = random.randint(30, 80)
+    #     soil_moisture = round(random.uniform(1, 10), 1)
+    #     avg = round(random.uniform(0, 1), 2)
+    #     update_database(soil_moisture, temperature, humidity, avg)
+    #     with psycopg2.connect(**config()) as db:
+    #         cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    #         cursor.execute('select * from app_user where id=%s', (1,))
+    #         user = cursor.fetchone()
+    #         if user[1] == 'automated':
+    #             context.set_state(Automated())
+    #         elif user[1] == 'manual':
+    #             context.set_state(Manual())
+    #         elif user[1] == 'scheduler':
+    #             context.set_state(Scheduler())
+    #     s_flag = context.request()
+    #     print(s_flag)
+    #     if s_flag:
+    #         print('System is activated!')
+    #     else:
+    #         print('System is turned off...')
+    #     time.sleep(10)
 
 
 if __name__ == '__main__':
