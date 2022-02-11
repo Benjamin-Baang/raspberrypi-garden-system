@@ -1,6 +1,5 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-#import sqlite3 as sql
 import psycopg2, psycopg2.extras
 from config_db import config
 
@@ -59,6 +58,7 @@ class Automated(State):
 #                return True
 #            else:
 #                return False
+            print("Automated...")
             return True
            
 
