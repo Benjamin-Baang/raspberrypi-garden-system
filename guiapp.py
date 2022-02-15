@@ -35,6 +35,14 @@ def app_setup():
             humidity real,
             camera real
             )""")
+        
+        cur.execute("""create table if not exists timer4 (
+            day TEXT,
+            BTime real,
+            Etime real,
+            AmPm1,
+            AmPm2
+            )""")
 
 #perform an action when called
 def subscribe():
