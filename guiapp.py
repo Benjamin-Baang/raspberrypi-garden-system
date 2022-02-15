@@ -127,22 +127,101 @@ def create_window():
     
 
 def create_window2():
-    new_window=Toplevel()
-    new_window.geometry('400x400')
-    # sec=StringVar()
-    # Entry(new_window, textvariable=sec, width=2).place(x=220,y=120)
-    # sec.set('00')
-    # mins=StringVar()
-    # Entry(new_window,textvariable=mins, width=2).place(x=180,y=120)
-    # mins.set('00')
-    # hrs=StringVar()
-    # Entry(new_window,textvariable=hrs, width=2).place(x=142, y=120)
-    # hrs.set('00')
+    def insert():
+        #con=sqlite3.connect("sensors.db")
+        with psycopg2.connect(**config()) as con:
+            cur=con.cursor()
 
-    # l=Label(new_window, text="Set Timer").pack(side=TOP, pady=10)
+            cur.execute('select * from timer4 where day=%s', (clicked.get(),))
+            if cur.fetchall():
+                cur.execute("update timer4 set Btime=%s, Etime=%s,AmPm1=%s,AmPm2=%s where day=?", (EndTime.get(),EndTime.get(),clicked.get(),clicked1.get(),clicked2.get()))
+            else:
+                cur.execute("INSERT INTO timer4 VALUES (:drdnMenu,:BegTime,:EndTime,:drdnAMPM1,:drdnAMPM2)",
+                {
+                    'drdnMenu': clicked.get(),
+                    'BegTime': BegTime.get(),
+                    'EndTime': EndTime.get(),
+                    'drdnAMPM1': clicked1.get(),
+                    'drdnAMPM2': clicked2.get()
+                })
 
-    # aButton = Button(new_window, text="Start",command=subscribe)
-    # aButton.pack()
+        BegTime.delete(0,END)
+        EndTime.delete(0,END)
+
+    def queryfTimer():
+        #con=sqlite3.connect("sensors.db")
+        with psycopg2.connect(**config()) as con:
+            cur=con.cursor()
+
+            cur.execute("SELECT * FROM timer4")
+            #cur.execute("select * from timer2 where id=?", (1,))
+            r=cur.fetchall()
+            show=''
+            for info in r:
+                show=show + str(info)+"\n"
+
+            c_label=Label(new_window,text=show).grid(row=7)
+
+
+    new_window=Tk()
+    new_window.geometry('500x450')
+
+
+    l1=Label(new_window, text="Choose A Day Of the Week: ")
+    l1.grid(row=0,column=0, padx=5, pady=10)
+
+
+    clicked=StringVar()
+    options = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+
+    drdnMenu=OptionMenu(new_window,clicked, *options)
+    drdnMenu.grid(row=0,column=1)
+
+
+    A=Label(new_window,text="From: ")
+    A.grid(row=1,column=1,pady=15)
+
+
+    l2=Label(new_window, text="BEGINNING Time: ")
+    l2.grid(row=2,column=0, padx=5, pady=10)
+
+    BegTime=Entry(new_window, bg="lightblue")
+    BegTime.grid(row=2,column=1)
+
+    Aampm=Label(new_window, text="12-Hour Clock: ")
+    Aampm.grid(row=3,column=0)
+    #============================
+    clicked1=StringVar()
+    options1 = ["AM","PM"]
+
+    drdnAMPM1=OptionMenu(new_window,clicked1, *options1)
+    drdnAMPM1.grid(row=3,column=1)
+
+    #===================
+
+    B=Label(new_window,text="To: ")
+    B.grid(row=4,column=1,pady=15)
+
+    l3=Label(new_window, text="END Time: ")
+    l3.grid(row=5,column=0, padx=5, pady=10)
+
+    EndTime=Entry(new_window, bg="lightblue")
+    EndTime.grid(row=5,column=1)
+
+    Bampm=Label(new_window, text="12-Hour Clock: ")
+    Bampm.grid(row=6,column=0)
+
+    clicked2=StringVar()
+    options2 = ["AM","PM"]
+
+    drdnAMPM2=OptionMenu(new_window,clicked2, *options2)
+    drdnAMPM2.grid(row=6,column=1)
+
+    aButton = Button(new_window, text="Submit Record To Database",command=insert)
+    aButton.grid(row=7,column=1,pady=15)
+
+    bButton = Button(new_window, text="Show User Input",command=queryfTimer)
+    bButton.grid(row=8,column=1)
 
 
 if __name__ == '__main__':
