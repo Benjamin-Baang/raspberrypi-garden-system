@@ -134,7 +134,7 @@ def create_window2():
 
             cur.execute('select * from timer4 where day=%s', (clicked.get(),))
             if cur.fetchall():
-                cur.execute("update timer4 set Btime=%s, Etime=%s,AmPm1=%s,AmPm2=%s where day=?", (EndTime.get(),EndTime.get(),clicked.get(),clicked1.get(),clicked2.get()))
+                cur.execute("update timer4 set Btime=%s, Etime=%s,AmPm1=%s,AmPm2=%s where day=%s", (EndTime.get(),EndTime.get(),clicked.get(),clicked1.get(),clicked2.get()))
             else:
                 cur.execute("INSERT INTO timer4 VALUES (:drdnMenu,:BegTime,:EndTime,:drdnAMPM1,:drdnAMPM2)",
                 {
