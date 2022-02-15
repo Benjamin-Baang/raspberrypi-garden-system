@@ -66,6 +66,17 @@ cur.execute("""create table if not exists manual (
     )""")
 
 #============================================================================
+#=========================For Timer table===================================
+
+cur.execute("""create table if not exists timer4 (
+    day TEXT,
+    BTime real,
+    Etime real,
+    AmPm1,
+    AmPm2
+    )""")
+
+#============================================================================
     
 #add data to table
 # for record in data:
