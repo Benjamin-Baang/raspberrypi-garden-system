@@ -36,7 +36,7 @@ def app_setup():
             camera real
             )""")
         
-        cur.execute("""create table if not exists timer4 (
+        cur.execute("""create table if not exists timer (
             day TEXT,
             BTime real,
             Etime real,
@@ -132,11 +132,11 @@ def create_window2():
         with psycopg2.connect(**config()) as con:
             cur=con.cursor()
 
-            cur.execute('select * from timer4 where day=%s', (clicked.get(),))
+            cur.execute('select * from timer where day=%s', (clicked.get(),))
             if cur.fetchall():
-                cur.execute("update timer4 set Btime=%s, Etime=%s,AmPm1=%s,AmPm2=%s where day=%s", (EndTime.get(),EndTime.get(),clicked.get(),clicked1.get(),clicked2.get()))
+                cur.execute("update timer set Btime=%s, Etime=%s,AmPm1=%s,AmPm2=%s where day=%s", (EndTime.get(),EndTime.get(),clicked.get(),clicked1.get(),clicked2.get()))
             else:
-                cur.execute("INSERT INTO timer4 VALUES (:drdnMenu,:BegTime,:EndTime,:drdnAMPM1,:drdnAMPM2)",
+                cur.execute("INSERT INTO timer VALUES (:drdnMenu,:BegTime,:EndTime,:drdnAMPM1,:drdnAMPM2)",
                 {
                     'drdnMenu': clicked.get(),
                     'BegTime': BegTime.get(),
@@ -153,7 +153,7 @@ def create_window2():
         with psycopg2.connect(**config()) as con:
             cur=con.cursor()
 
-            cur.execute("SELECT * FROM timer4")
+            cur.execute("SELECT * FROM timer")
             #cur.execute("select * from timer2 where id=?", (1,))
             r=cur.fetchall()
             show=''
