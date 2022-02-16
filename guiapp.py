@@ -13,6 +13,7 @@ def app_setup():
     '''
     with psycopg2.connect(**config()) as con:
         cur=con.cursor()
+        cur.execute('''drop table if exists sensors''')
         cur.execute("""create table if not exists sensors (
                             soil REAL,
                             temperature REAL, 
@@ -20,7 +21,7 @@ def app_setup():
                             camera REAL,
                             DateTaken TIMESTAMP
                             )""")
-        cur.execute('''delete from sensors''')
+        cur.execute('''drop table if exists app_user''')
         cur.execute('''create table if not exists app_user (
                             id serial primary key,
                             State text
@@ -28,6 +29,7 @@ def app_setup():
         cur.execute("select * from app_user")
         if cur.fetchone() is None:
             cur.execute("insert into app_user (id, State) VALUES(%s, %s)", (0, 'automatic'))
+        cur.execute('''drop table if exists manual''')
         cur.execute("""create table if not exists manual (
             id serial primary key,
             soil real,
@@ -35,7 +37,7 @@ def app_setup():
             humidity real,
             camera real
             )""")
-        
+        cur.execute('''drop table if exists timer''')
         cur.execute("""create table if not exists timer (
             day TEXT,
             BTime real,
@@ -56,15 +58,6 @@ def subscribe():
 
 
 def create_window():
-    # with psycopg2.connect(**config()) as con:
-    #     cur = con.cursor()
-    #     cur.execute('select * from app_user where id=%s', (1,))
-    #     if cur.fetchall():
-    #         cur.execute('update app_user set State=%s where id=%s', ('manual', 1))
-    #     else:
-    #         cur.execute('insert into app_user (State) VALUES (%s)', ('manual',)) 
-
-
     def submit():
         with psycopg2.connect(**config()) as con:
             cur = con.cursor()
