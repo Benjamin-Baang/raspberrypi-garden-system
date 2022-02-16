@@ -6,21 +6,23 @@ import picamera.array
 
 # Load a specific image (for testing purposes)
 # original = cv2.imread('/home/pi/project/park.png')
-original = cv2.imread('test.png')
+# original = cv2.imread('test.png')
 
 
 '''
 Take an image with the camera
 '''
 def take_picture():
-	# Instantiate a camera object
-	cam = PiCamera()
-	# Rotate image if needed
-	cam.rotation = 180
-	# Set resolution of image
-	cam.resolution = (1920, 1080)
-	# Save image as file (for testing purposes)
-	cam.capture('test.png')
+    # Instantiate a camera object
+    cam = PiCamera()
+    # Rotate image if needed
+    cam.rotation = 180
+    # Set resolution of image
+    cam.resolution = (1920, 1080)
+    # Save image as file (for testing purposes)
+    cam.capture('test.png')
+    cam.close()
+    return cv2.imread('test.png')
 
 
 ''' 
@@ -86,22 +88,25 @@ def calc_ndvi(image):
     ndvi = (r.astype(float) - b) / bottom
     # Save NDVI array as .csv file
     # (warning - file size is about 32 MB)
-    # np.savetxt("output.csv", ndvi, fmt="%.3f", delimiter=",")
     # Return NDVI value
     return ndvi
 
 
 if __name__ == '__main__':
-	display(original, 'Original')
-	contrasted = contrast_stretch(original)
-	display(contrasted, 'Contrasted original')
-	# Create/Update contrasted image file
-	cv2.imwrite('contrasted.png', contrasted)
-	# Calculate NDVI value
-	ndvi = calc_ndvi(contrasted)
-	display(ndvi, 'NDVI')
-	cv2.imwrite('ndvi.png', ndvi)
-	# If image is too dark, increase contrast
-	ndvi_contrasted = contrast_stretch(ndvi)
-	display(ndvi_contrasted, 'NDVI Contrasted')
-	cv2.imwrite('ndvi_contrasted.png', ndvi_contrasted)
+    original = take_picture()
+    # display(original, 'Original')
+    contrasted = contrast_stretch(original)
+    # display(contrasted, 'Contrasted original')
+    # Create/Update contrasted image file
+    # cv2.imwrite('contrasted.png', contrasted)
+    # Calculate NDVI value
+    ndvi = calc_ndvi(contrasted)
+    # display(ndvi, 'NDVI')
+    # cv2.imwrite('ndvi.png', ndvi)
+    # If image is too dark, increase contrast
+    ndvi_contrasted = contrast_stretch(ndvi)
+    # display(ndvi_contrasted, 'NDVI Contrasted')
+    # Save NDVI array as .csv file
+    # (warning - file size is about 32 MB)
+    np.savetxt("output.csv", ndvi_contrasted, fmt="%.3f", delimiter=",")
+    cv2.imwrite('ndvi_contrasted.png', ndvi_contrasted)
