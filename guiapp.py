@@ -40,8 +40,8 @@ def app_setup():
             day TEXT,
             BTime real,
             Etime real,
-            AmPm1,
-            AmPm2
+            AmPm1 real,
+            AmPm2 real
             )""")
 
 #perform an action when called
