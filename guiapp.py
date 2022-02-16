@@ -56,18 +56,23 @@ def subscribe():
 
 
 def create_window():
-    with psycopg2.connect(**config()) as con:
-        cur = con.cursor()
-        cur.execute('select * from app_user where id=%s', (1,))
-        if cur.fetchall():
-            cur.execute('update app_user set State=%s where id=%s', ('manual', 1))
-        else:
-            cur.execute('insert into app_user (State) VALUES (%s)', ('manual',)) 
+    # with psycopg2.connect(**config()) as con:
+    #     cur = con.cursor()
+    #     cur.execute('select * from app_user where id=%s', (1,))
+    #     if cur.fetchall():
+    #         cur.execute('update app_user set State=%s where id=%s', ('manual', 1))
+    #     else:
+    #         cur.execute('insert into app_user (State) VALUES (%s)', ('manual',)) 
 
 
     def submit():
         with psycopg2.connect(**config()) as con:
             cur = con.cursor()
+            cur.execute('select * from app_user where id=%s', (1,))
+            if cur.fetchall():
+                cur.execute('update app_user set State=%s where id=%s', ('manual', 1))
+            else:
+                cur.execute('insert into app_user (State) VALUES (%s)', ('manual',)) 
             cur.execute('select * from manual where id=%s', (1,))
             if cur.fetchall():
                 cur.execute("update manual set soil=%s, temperature=%s, humidity=%s, camera=%s where id=%s", (entry1.get(), entry2.get(), entry3.get(), entry4.get(), 1))
