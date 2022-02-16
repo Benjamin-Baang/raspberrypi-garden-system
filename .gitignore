@@ -16,3 +16,7 @@ database.ini
 lib64
 scratch.txt
 testdatabase.py
+Scripts/
+build/
+dist/
+guiapp.spec
