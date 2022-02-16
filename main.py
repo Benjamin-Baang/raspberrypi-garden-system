@@ -74,7 +74,12 @@ def process_sensors(context: Context):
 def app_listen(context: Context):
     with psycopg2.connect(**config()) as db:
         cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
-        cursor.execute('select * from app_user where id=%s', (1,))
+        cursor.execute('select exists(select 1 from app_user where id=%s)', (1,))
+        user = cursor.fetchone()
+        if user[0]:
+            cursor.execute('select * from app_user where id=%s', (1,))
+        else:
+            cursor.execute('select * from app_user where id=%s', (0,))
         user = cursor.fetchone()
         if user[1] == 'automated':
             context.set_state(Automated())
@@ -83,7 +88,7 @@ def app_listen(context: Context):
         elif user[1] == 'scheduler':
             context.set_state(Scheduler())
     s_flag = context.request()
-    print(s_flag)
+    # print(s_flag)
     if s_flag:
         print('System is activated!\n')
     else:
