@@ -90,7 +90,7 @@ def manual():
             c_label=Label(new_window,text=show).grid(row=7)
 
 
-    new_window=Tk()
+    new_window=Toplevel()
     new_window.geometry('470x400')
 
     l1=Label(new_window, text="Soil Moisture Value: ")
@@ -160,7 +160,7 @@ def timer():
             c_label=Label(new_window,text=show).grid(row=7)
 
 
-    new_window=Tk()
+    new_window=Toplevel()
     new_window.geometry('500x450')
 
 
@@ -168,11 +168,11 @@ def timer():
     l1.grid(row=0,column=0, padx=5, pady=10)
 
 
-    days=StringVar()
     options = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
-
+    days=StringVar()
+    days.set("Monday")
     days_menu=OptionMenu(new_window, days, *options)
-    days_menu.grid(row=0,column=1)
+    days_menu.grid(row=0, column=1)
 
 
     A=Label(new_window,text="From: ")
@@ -187,13 +187,13 @@ def timer():
 
     Aampm=Label(new_window, text="12-Hour Clock: ")
     Aampm.grid(row=3,column=0)
+    
     #============================
-    ampm1=StringVar()
     options1 = ["AM","PM"]
-
+    ampm1=StringVar()
+    ampm1.set("AM")
     ampm1_menu=OptionMenu(new_window, ampm1, *options1)
     ampm1_menu.grid(row=3,column=1)
-
     #===================
 
     B=Label(new_window,text="To: ")
@@ -208,9 +208,9 @@ def timer():
     Bampm=Label(new_window, text="12-Hour Clock: ")
     Bampm.grid(row=6,column=0)
 
-    ampm2=StringVar()
     options2 = ["AM","PM"]
-
+    ampm2=StringVar()
+    ampm2.set("AM")
     ampm2_menu=OptionMenu(new_window,ampm2, *options2)
     ampm2_menu.grid(row=6,column=1)
 
