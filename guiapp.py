@@ -40,14 +40,14 @@ def app_setup():
         cur.execute('''drop table if exists timer''')
         cur.execute("""create table if not exists timer (
             day TEXT,
-            BTime real,
-            Etime real,
-            AmPm1 real,
-            AmPm2 real
+            STime real,
+            FTime real,
+            AmPm1 varchar(2),
+            AmPm2 varchar(2)
             )""")
 
 #perform an action when called
-def subscribe():
+def automated():
     with psycopg2.connect(**config()) as con:
         cur = con.cursor()
         cur.execute('select * from app_user where id=%s', (1,))
@@ -57,7 +57,7 @@ def subscribe():
             cur.execute('insert into app_user (State) VALUES (%s)', ('automated',)) 
 
 
-def create_window():
+def manual():
     def submit():
         with psycopg2.connect(**config()) as con:
             cur = con.cursor()
@@ -90,7 +90,7 @@ def create_window():
             c_label=Label(new_window,text=show).grid(row=7)
 
 
-    new_window=Tk()
+    new_window=Toplevel()
     new_window.geometry('470x400')
 
     l1=Label(new_window, text="Soil Moisture Value: ")
@@ -124,29 +124,28 @@ def create_window():
     qButton.grid(row=6,column=1)
     
 
-def create_window2():
-    def insert():
+def timer():
+    def submit():
         #con=sqlite3.connect("sensors.db")
         with psycopg2.connect(**config()) as con:
             cur=con.cursor()
-
-            cur.execute('select * from timer where day=%s', (clicked.get(),))
+            cur.execute('select * from app_user where id=%s', (1,))
             if cur.fetchall():
-                cur.execute("update timer set Btime=%s, Etime=%s,AmPm1=%s,AmPm2=%s where day=%s", (EndTime.get(),EndTime.get(),clicked.get(),clicked1.get(),clicked2.get()))
+                cur.execute('update app_user set State=%s where id=%s', ('timer', 1))
             else:
-                cur.execute("INSERT INTO timer VALUES (:drdnMenu,:BegTime,:EndTime,:drdnAMPM1,:drdnAMPM2)",
-                {
-                    'drdnMenu': clicked.get(),
-                    'BegTime': BegTime.get(),
-                    'EndTime': EndTime.get(),
-                    'drdnAMPM1': clicked1.get(),
-                    'drdnAMPM2': clicked2.get()
-                })
+                cur.execute('insert into app_user (State) VALUES (%s)', ('timer',)) 
+            cur.execute('select * from timer where day=%s', (days.get(),))
+            if cur.fetchall():
+                cur.execute("update timer set STime=%s, FTime=%s,AmPm1=%s,AmPm2=%s where day=%s", 
+                            (stime.get(),ftime.get(),ampm1.get(),ampm2.get(),days.get()))
+            else:
+                cur.execute("insert into timer (day, STime, FTime, AmPm1, AmPm2) VALUES (%s, %s, %s, %s, %s)", 
+                            (days.get(), stime.get(),ftime.get(),ampm1.get(),ampm2.get()))
 
-        BegTime.delete(0,END)
-        EndTime.delete(0,END)
+        stime.delete(0,END)
+        ftime.delete(0,END)
 
-    def queryfTimer():
+    def query():
         #con=sqlite3.connect("sensors.db")
         with psycopg2.connect(**config()) as con:
             cur=con.cursor()
@@ -161,7 +160,7 @@ def create_window2():
             c_label=Label(new_window,text=show).grid(row=7)
 
 
-    new_window=Tk()
+    new_window=Toplevel()
     new_window.geometry('500x450')
 
 
@@ -169,11 +168,11 @@ def create_window2():
     l1.grid(row=0,column=0, padx=5, pady=10)
 
 
-    clicked=StringVar()
     options = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
-
-    drdnMenu=OptionMenu(new_window,clicked, *options)
-    drdnMenu.grid(row=0,column=1)
+    days=StringVar()
+    days.set("Monday")
+    days_menu=OptionMenu(new_window, days, *options)
+    days_menu.grid(row=0, column=1)
 
 
     A=Label(new_window,text="From: ")
@@ -183,18 +182,18 @@ def create_window2():
     l2=Label(new_window, text="BEGINNING Time: ")
     l2.grid(row=2,column=0, padx=5, pady=10)
 
-    BegTime=Entry(new_window, bg="lightblue")
-    BegTime.grid(row=2,column=1)
+    stime=Entry(new_window, bg="lightblue")
+    stime.grid(row=2,column=1)
 
     Aampm=Label(new_window, text="12-Hour Clock: ")
     Aampm.grid(row=3,column=0)
+    
     #============================
-    clicked1=StringVar()
     options1 = ["AM","PM"]
-
-    drdnAMPM1=OptionMenu(new_window,clicked1, *options1)
-    drdnAMPM1.grid(row=3,column=1)
-
+    ampm1=StringVar()
+    ampm1.set("AM")
+    ampm1_menu=OptionMenu(new_window, ampm1, *options1)
+    ampm1_menu.grid(row=3,column=1)
     #===================
 
     B=Label(new_window,text="To: ")
@@ -203,22 +202,22 @@ def create_window2():
     l3=Label(new_window, text="END Time: ")
     l3.grid(row=5,column=0, padx=5, pady=10)
 
-    EndTime=Entry(new_window, bg="lightblue")
-    EndTime.grid(row=5,column=1)
+    ftime=Entry(new_window, bg="lightblue")
+    ftime.grid(row=5,column=1)
 
     Bampm=Label(new_window, text="12-Hour Clock: ")
     Bampm.grid(row=6,column=0)
 
-    clicked2=StringVar()
     options2 = ["AM","PM"]
+    ampm2=StringVar()
+    ampm2.set("AM")
+    ampm2_menu=OptionMenu(new_window,ampm2, *options2)
+    ampm2_menu.grid(row=6,column=1)
 
-    drdnAMPM2=OptionMenu(new_window,clicked2, *options2)
-    drdnAMPM2.grid(row=6,column=1)
-
-    aButton = Button(new_window, text="Submit Record To Database",command=insert)
+    aButton = Button(new_window, text="Submit Record To Database",command=submit)
     aButton.grid(row=7,column=1,pady=15)
 
-    bButton = Button(new_window, text="Show User Input",command=queryfTimer)
+    bButton = Button(new_window, text="Show User Input",command=query)
     bButton.grid(row=8,column=1)
 
 
@@ -251,7 +250,7 @@ if __name__ == '__main__':
 
 
     #==================================database Display===========================
-    def open():
+    def display_data():
         root=Tk()
         root.title('Present SQLite Data')
         root.geometry('900x750')
@@ -431,14 +430,14 @@ if __name__ == '__main__':
         plt.show()
 
 
-    Button(ws, text="Automated",image = photoimage, compound = LEFT, command=subscribe).pack(pady=5)
-    Button(ws, text="Manual", image = photoimage1, compound = LEFT, command=create_window).pack(pady=5)
-    Button(ws, text="Timer",image = photoimage2, compound = LEFT,command=create_window2).pack(pady=5)
+    Button(ws, text="Automated",image = photoimage, compound = LEFT, command=automated).pack(pady=5)
+    Button(ws, text="Manual", image = photoimage1, compound = LEFT, command=manual).pack(pady=5)
+    Button(ws, text="Timer",image = photoimage2, compound = LEFT,command=timer).pack(pady=5)
     Button(ws, text="Exit",image = photoimage3, compound = LEFT,command=ws.destroy).pack(pady=5)
     Button(ws, text=" Display Soil Graph",image=photoimage4,compound = LEFT, command=soil_graph).pack(pady=5)
     Button(ws, text=" Display Temperature Graph",image=photoimage4,compound = LEFT, command=temperature_graph).pack(pady=5)
     Button(ws, text=" Display Humidity Graph",image=photoimage4,compound = LEFT, command=humidity_graph).pack(pady=5)
     Button(ws, text=" Display Camera Graph",image=photoimage4,compound = LEFT, command=camera_graph).pack(pady=5)
-    Button(ws, text="Display Data",image=photoimage4,compound = LEFT, command=open).pack(pady=5)
+    Button(ws, text="Display Data",image=photoimage4,compound = LEFT, command=display_data).pack(pady=5)
 
     ws.mainloop()

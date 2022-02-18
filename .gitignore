@@ -20,3 +20,4 @@ Scripts/
 build/
 dist/
 guiapp.spec
+scratch.py
