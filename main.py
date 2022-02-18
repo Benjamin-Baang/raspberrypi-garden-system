@@ -85,7 +85,7 @@ def app_listen(context: Context):
             context.set_state(Automated())
         elif user[1] == 'manual':
             context.set_state(Manual())
-        elif user[1] == 'scheduler':
+        elif user[1] == 'timer':
             context.set_state(Scheduler())
     s_flag = context.request()
     # print(s_flag)
