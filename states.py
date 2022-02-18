@@ -2,6 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 import psycopg2, psycopg2.extras
 from config_db import config
+from datetime import datetime
 
 class Context:
 
@@ -11,8 +12,6 @@ class Context:
         self._state = state
 
     def set_state(self, state: State):
-
-        print(f"Context: Transition to {type(state).__name__}")
         self._state = state
         self._state.context = self
 
@@ -99,9 +98,32 @@ class Manual(State):
 
 class Scheduler(State):
     def handle(self) -> None:
-        print("Scheduler handles request.")
-        print("Scheduler changes state to Automated.")
-        self.context.set_state(Automated())
+        print("Timer...")
+        today = datetime.now().strftime('%A')
+        print(f"Today is {today}.")
+        with psycopg2.connect(**config()) as db:
+#            db.row_factory = sql.Row
+            cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            # cursor.execute("select * from manual where id=?", (1,))
+            cursor.execute('select * from timer where day=%s', (today,))
+            user = cursor.fetchone()
+            if user is not None:
+                print("User inputs...")
+                print(f"Day: {user[0]}\n"
+                    f"Start time: {user[1]} {user[3]}\n"
+                    f"End time: {user[2]} {user[4]}\n")
+                ctime = int(datetime.now().strftime('%I'))
+                campm = datetime.now().strftime('%p')
+                if ctime >= int(user[2]) and campm in user[4]:
+                    if ctime == 12: 
+                        return True
+                    return False
+                if ctime >= int(user[1]) and campm in user[3]:
+                    return True
+                else:
+                    return False
+            else:
+                return False
 
 
 if __name__ == "__main__":
@@ -120,7 +142,7 @@ if __name__ == "__main__":
             context.set_state(Automated())
         elif user[1] == 'manual':
             context.set_state(Manual())
-        elif user[1] == 'scheduler':
+        elif user[1] == 'timer':
             context.set_state(Scheduler())
 
     print(context.request())
