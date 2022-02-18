@@ -47,7 +47,7 @@ def app_setup():
             )""")
 
 #perform an action when called
-def subscribe():
+def automated():
     with psycopg2.connect(**config()) as con:
         cur = con.cursor()
         cur.execute('select * from app_user where id=%s', (1,))
@@ -57,7 +57,7 @@ def subscribe():
             cur.execute('insert into app_user (State) VALUES (%s)', ('automated',)) 
 
 
-def create_window():
+def manual():
     def submit():
         with psycopg2.connect(**config()) as con:
             cur = con.cursor()
@@ -124,7 +124,7 @@ def create_window():
     qButton.grid(row=6,column=1)
     
 
-def create_window2():
+def timer():
     def insert():
         #con=sqlite3.connect("sensors.db")
         with psycopg2.connect(**config()) as con:
@@ -251,7 +251,7 @@ if __name__ == '__main__':
 
 
     #==================================database Display===========================
-    def open():
+    def display_data():
         root=Tk()
         root.title('Present SQLite Data')
         root.geometry('900x750')
@@ -431,14 +431,14 @@ if __name__ == '__main__':
         plt.show()
 
 
-    Button(ws, text="Automated",image = photoimage, compound = LEFT, command=subscribe).pack(pady=5)
-    Button(ws, text="Manual", image = photoimage1, compound = LEFT, command=create_window).pack(pady=5)
-    Button(ws, text="Timer",image = photoimage2, compound = LEFT,command=create_window2).pack(pady=5)
+    Button(ws, text="Automated",image = photoimage, compound = LEFT, command=automated).pack(pady=5)
+    Button(ws, text="Manual", image = photoimage1, compound = LEFT, command=manual).pack(pady=5)
+    Button(ws, text="Timer",image = photoimage2, compound = LEFT,command=timer).pack(pady=5)
     Button(ws, text="Exit",image = photoimage3, compound = LEFT,command=ws.destroy).pack(pady=5)
     Button(ws, text=" Display Soil Graph",image=photoimage4,compound = LEFT, command=soil_graph).pack(pady=5)
     Button(ws, text=" Display Temperature Graph",image=photoimage4,compound = LEFT, command=temperature_graph).pack(pady=5)
     Button(ws, text=" Display Humidity Graph",image=photoimage4,compound = LEFT, command=humidity_graph).pack(pady=5)
     Button(ws, text=" Display Camera Graph",image=photoimage4,compound = LEFT, command=camera_graph).pack(pady=5)
-    Button(ws, text="Display Data",image=photoimage4,compound = LEFT, command=open).pack(pady=5)
+    Button(ws, text="Display Data",image=photoimage4,compound = LEFT, command=display_data).pack(pady=5)
 
     ws.mainloop()
