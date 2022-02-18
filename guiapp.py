@@ -40,8 +40,8 @@ def app_setup():
         cur.execute('''drop table if exists timer''')
         cur.execute("""create table if not exists timer (
             day TEXT,
-            BTime real,
-            Etime real,
+            STime real,
+            FTime real,
             AmPm1 real,
             AmPm2 real
             )""")
@@ -125,28 +125,27 @@ def manual():
     
 
 def timer():
-    def insert():
+    def submit():
         #con=sqlite3.connect("sensors.db")
         with psycopg2.connect(**config()) as con:
             cur=con.cursor()
-
-            cur.execute('select * from timer where day=%s', (clicked.get(),))
+            cur.execute('select * from app_user where id=%s', (1,))
             if cur.fetchall():
-                cur.execute("update timer set Btime=%s, Etime=%s,AmPm1=%s,AmPm2=%s where day=%s", (EndTime.get(),EndTime.get(),clicked.get(),clicked1.get(),clicked2.get()))
+                cur.execute('update app_user set State=%s where id=%s', ('timer', 1))
             else:
-                cur.execute("INSERT INTO timer VALUES (:drdnMenu,:BegTime,:EndTime,:drdnAMPM1,:drdnAMPM2)",
-                {
-                    'drdnMenu': clicked.get(),
-                    'BegTime': BegTime.get(),
-                    'EndTime': EndTime.get(),
-                    'drdnAMPM1': clicked1.get(),
-                    'drdnAMPM2': clicked2.get()
-                })
+                cur.execute('insert into app_user (State) VALUES (%s)', ('timer',)) 
+            cur.execute('select * from timer where day=%s', (days.get(),))
+            if cur.fetchall():
+                cur.execute("update timer set STime=%s, FTime=%s,AmPm1=%s,AmPm2=%s where day=%s", 
+                            (stime.get(),ftime.get(),(0 if ampm1.get() in "AM" else 1),(0 if ampm2.get() in "AM" else 1),days.get()))
+            else:
+                cur.execute("insert into timer (day, STime, FTime, AmPm1, AmPm2) VALUES (%s, %s, %s, %s, %s)", 
+                            (days.get(), stime.get(),ftime.get(),(0 if ampm1.get() in "AM" else 1),(0 if ampm2.get() in "AM" else 1)))
 
-        BegTime.delete(0,END)
-        EndTime.delete(0,END)
+        stime.delete(0,END)
+        ftime.delete(0,END)
 
-    def queryfTimer():
+    def query():
         #con=sqlite3.connect("sensors.db")
         with psycopg2.connect(**config()) as con:
             cur=con.cursor()
@@ -169,11 +168,11 @@ def timer():
     l1.grid(row=0,column=0, padx=5, pady=10)
 
 
-    clicked=StringVar()
+    days=StringVar()
     options = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 
-    drdnMenu=OptionMenu(new_window,clicked, *options)
-    drdnMenu.grid(row=0,column=1)
+    days_menu=OptionMenu(new_window, days, *options)
+    days_menu.grid(row=0,column=1)
 
 
     A=Label(new_window,text="From: ")
@@ -183,17 +182,17 @@ def timer():
     l2=Label(new_window, text="BEGINNING Time: ")
     l2.grid(row=2,column=0, padx=5, pady=10)
 
-    BegTime=Entry(new_window, bg="lightblue")
-    BegTime.grid(row=2,column=1)
+    stime=Entry(new_window, bg="lightblue")
+    stime.grid(row=2,column=1)
 
     Aampm=Label(new_window, text="12-Hour Clock: ")
     Aampm.grid(row=3,column=0)
     #============================
-    clicked1=StringVar()
+    ampm1=StringVar()
     options1 = ["AM","PM"]
 
-    drdnAMPM1=OptionMenu(new_window,clicked1, *options1)
-    drdnAMPM1.grid(row=3,column=1)
+    ampm1_menu=OptionMenu(new_window, ampm1, *options1)
+    ampm1_menu.grid(row=3,column=1)
 
     #===================
 
@@ -203,22 +202,22 @@ def timer():
     l3=Label(new_window, text="END Time: ")
     l3.grid(row=5,column=0, padx=5, pady=10)
 
-    EndTime=Entry(new_window, bg="lightblue")
-    EndTime.grid(row=5,column=1)
+    ftime=Entry(new_window, bg="lightblue")
+    ftime.grid(row=5,column=1)
 
     Bampm=Label(new_window, text="12-Hour Clock: ")
     Bampm.grid(row=6,column=0)
 
-    clicked2=StringVar()
+    ampm2=StringVar()
     options2 = ["AM","PM"]
 
-    drdnAMPM2=OptionMenu(new_window,clicked2, *options2)
-    drdnAMPM2.grid(row=6,column=1)
+    ampm2_menu=OptionMenu(new_window,ampm2, *options2)
+    ampm2_menu.grid(row=6,column=1)
 
-    aButton = Button(new_window, text="Submit Record To Database",command=insert)
+    aButton = Button(new_window, text="Submit Record To Database",command=submit)
     aButton.grid(row=7,column=1,pady=15)
 
-    bButton = Button(new_window, text="Show User Input",command=queryfTimer)
+    bButton = Button(new_window, text="Show User Input",command=query)
     bButton.grid(row=8,column=1)
 
 
