@@ -42,8 +42,8 @@ def app_setup():
             day TEXT,
             STime real,
             FTime real,
-            AmPm1 real,
-            AmPm2 real
+            AmPm1 varchar(2),
+            AmPm2 varchar(2)
             )""")
 
 #perform an action when called
@@ -137,10 +137,10 @@ def timer():
             cur.execute('select * from timer where day=%s', (days.get(),))
             if cur.fetchall():
                 cur.execute("update timer set STime=%s, FTime=%s,AmPm1=%s,AmPm2=%s where day=%s", 
-                            (stime.get(),ftime.get(),(0 if ampm1.get() in "AM" else 1),(0 if ampm2.get() in "AM" else 1),days.get()))
+                            (stime.get(),ftime.get(),ampm1.get(),ampm2.get(),days.get()))
             else:
                 cur.execute("insert into timer (day, STime, FTime, AmPm1, AmPm2) VALUES (%s, %s, %s, %s, %s)", 
-                            (days.get(), stime.get(),ftime.get(),(0 if ampm1.get() in "AM" else 1),(0 if ampm2.get() in "AM" else 1)))
+                            (days.get(), stime.get(),ftime.get(),ampm1.get(),ampm2.get()))
 
         stime.delete(0,END)
         ftime.delete(0,END)
