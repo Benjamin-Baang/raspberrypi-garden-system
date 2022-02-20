@@ -226,11 +226,22 @@ if __name__ == '__main__':
     
     ws = Tk()
     ws.title('Irrigation Controller')
-    ws.geometry('680x900')
+    ws.geometry('950x600')
     #ws['bg']='#5d8f90'
     ws['bg']='#5b8f90'
 
-    l=Label(ws, text="Irrigation Controlling System", font=('Verdana', 18)).pack(side=TOP, pady=10)
+    #l=Label(ws, text="Irrigation Controlling System", font=('Verdana', 18)).pack(side=TOP, pady=10)
+    l=Label(ws, text="Irrigation Controlling System", font=('Verdana', 35),bg='cyan')
+    l.grid(row=0,column=2,pady=20)
+
+    l1=Label(ws, text="Choose An Option", font=('Calibri', 22),bg='light blue')
+    l1.grid(row=1,column=1,padx=15,pady=25)
+
+    l2=Label(ws, text="Query Data", font=('Calibri', 22),bg='light blue')
+    l2.grid(row=1,column=2,pady=25)
+
+    l3=Label(ws, text="Terminate Program", font=('Calibri', 22),bg='light blue')
+    l3.grid(row=1,column=3,pady=25)
 
     #creating a phto image object to use image
     photo=PhotoImage(file = "images/manual.jpg")
@@ -382,6 +393,9 @@ if __name__ == '__main__':
             values.append(row[1])
 
         plt.plot_date(dates,values,'-')
+        plt.title('Soil vs Dates Taken')
+        plt.xlabel('Dates Taken')
+        plt.ylabel('Soil Information')
         plt.show()
     def temperature_graph():
         with psycopg2.connect(**config()) as con:
@@ -396,6 +410,9 @@ if __name__ == '__main__':
             dates.append(row[0])
             values.append(row[1])
         plt.plot_date(dates,values,'-')
+        plt.title('Temperature vs Dates Taken')
+        plt.xlabel('Dates Taken')
+        plt.ylabel('Temperature Information')
         plt.show()
         
     def humidity_graph():
@@ -412,6 +429,9 @@ if __name__ == '__main__':
             values.append(row[1])
 
         plt.plot_date(dates,values,'-')
+        plt.title('Humidity vs Dates Taken')
+        plt.xlabel('Dates Taken')
+        plt.ylabel('Humidity Information')
         plt.show()
         
     def camera_graph():
@@ -427,17 +447,43 @@ if __name__ == '__main__':
             dates.append(row[0])
             values.append(row[1])
         plt.plot_date(dates,values,'-')
+        plt.title('NDVI vs Dates Taken')
+        plt.xlabel('Dates Taken')
+        plt.ylabel('NDVI Value')
         plt.show()
 
 
-    Button(ws, text="Automated",image = photoimage, compound = LEFT, command=automated).pack(pady=5)
-    Button(ws, text="Manual", image = photoimage1, compound = LEFT, command=manual).pack(pady=5)
-    Button(ws, text="Timer",image = photoimage2, compound = LEFT,command=timer).pack(pady=5)
-    Button(ws, text="Exit",image = photoimage3, compound = LEFT,command=ws.destroy).pack(pady=5)
-    Button(ws, text=" Display Soil Graph",image=photoimage4,compound = LEFT, command=soil_graph).pack(pady=5)
-    Button(ws, text=" Display Temperature Graph",image=photoimage4,compound = LEFT, command=temperature_graph).pack(pady=5)
-    Button(ws, text=" Display Humidity Graph",image=photoimage4,compound = LEFT, command=humidity_graph).pack(pady=5)
-    Button(ws, text=" Display Camera Graph",image=photoimage4,compound = LEFT, command=camera_graph).pack(pady=5)
-    Button(ws, text="Display Data",image=photoimage4,compound = LEFT, command=display_data).pack(pady=5)
+#     Button(ws, text="Automated",image = photoimage, compound = LEFT, command=automated).pack(pady=5)
+#     Button(ws, text="Manual", image = photoimage1, compound = LEFT, command=manual).pack(pady=5)
+#     Button(ws, text="Timer",image = photoimage2, compound = LEFT,command=timer).pack(pady=5)
+#     Button(ws, text="Exit",image = photoimage3, compound = LEFT,command=ws.destroy).pack(pady=5)
+#     Button(ws, text=" Display Soil Graph",image=photoimage4,compound = LEFT, command=soil_graph).pack(pady=5)
+#     Button(ws, text=" Display Temperature Graph",image=photoimage4,compound = LEFT, command=temperature_graph).pack(pady=5)
+#     Button(ws, text=" Display Humidity Graph",image=photoimage4,compound = LEFT, command=humidity_graph).pack(pady=5)
+#     Button(ws, text=" Display Camera Graph",image=photoimage4,compound = LEFT, command=camera_graph).pack(pady=5)
+#     Button(ws, text="Display Data",image=photoimage4,compound = LEFT, command=display_data).pack(pady=5)
+
+    button1=Button(ws, text="Automated",image = photoimage, compound = LEFT, command=automated)
+    button1.grid(row=2,column=1,padx=15,pady=10)
+    button2=Button(ws, text="Manual", image = photoimage1, compound = LEFT, command=create_window)
+    button2.grid(row=3,column=1,padx=15,pady=10)
+    button3=Button(ws, text="Timer",image = photoimage2, compound = LEFT,command=create_window2)
+    button3.grid(row=4,column=1,padx=15,pady=10)
+    button5=Button(ws, text=" Display Soil Graph",image=photoimage4,compound = LEFT, command=soil_graph)
+    button5.grid(row=2,column=2,padx=15,pady=10)
+    button6=Button(ws, text=" Display Temperature Graph",image=photoimage4,compound = LEFT, command=temperature_graph)
+    button6.grid(row=3,column=2,padx=15,pady=10)
+    button7=Button(ws, text=" Display Humidity Graph",image=photoimage4,compound = LEFT, command=humidity_graph)
+    button7.grid(row=4,column=2,padx=15,pady=10)
+    button8=Button(ws, text=" Display Camera Graph",image=photoimage4,compound = LEFT, command=camera_graph)
+    button8.grid(row=5,column=2,padx=15,pady=10)
+    button4=Button(ws, text="Exit",image = photoimage3, compound = LEFT,command=ws.destroy)
+    button4.grid(row=3,column=3,padx=15,pady=10)
+
+    button9=Button(ws, text="Display Data",image=photoimage4,compound = LEFT, command=open)
+    button9.grid(row=6,column=2,padx=15,pady=10)
+
+
+
 
     ws.mainloop()
