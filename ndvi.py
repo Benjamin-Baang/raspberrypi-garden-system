@@ -16,7 +16,7 @@ def take_picture():
     # Instantiate a camera object
     cam = PiCamera()
     # Rotate image if needed
-    cam.rotation = 180
+    # cam.rotation = 180
     # Set resolution of image
     cam.resolution = (1920, 1080)
     # Save image as file (for testing purposes)
@@ -89,11 +89,12 @@ def calc_ndvi(image):
     # Save NDVI array as .csv file
     # (warning - file size is about 32 MB)
     # Return NDVI value
-    return ndvi
+    return ndvi, np.mean(ndvi)
 
 
 if __name__ == '__main__':
     original = take_picture()
+    print("Picture taken!")
     # display(original, 'Original')
     contrasted = contrast_stretch(original)
     # display(contrasted, 'Contrasted original')
@@ -101,6 +102,7 @@ if __name__ == '__main__':
     # cv2.imwrite('contrasted.png', contrasted)
     # Calculate NDVI value
     ndvi = calc_ndvi(contrasted)
+    # np.savetxt("output.csv", ndvi, fmt="%.3f", delimiter=",") 
     # display(ndvi, 'NDVI')
     # cv2.imwrite('ndvi.png', ndvi)
     # If image is too dark, increase contrast

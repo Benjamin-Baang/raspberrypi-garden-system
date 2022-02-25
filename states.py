@@ -36,35 +36,21 @@ class State(ABC):
 
 class Automated(State):
     def handle(self) -> None:
-        # Get user preferences here
-#        print("Automated handles request.")
-#        print("Automated changes state to Manual.")
-#        self.context.set_state(Manual())
-#        with sql.connect(f'sensors.db') as db:
-#        with psycopg2.connect(*config()) as db:
-#            db.row_factory = sql.Row
-#            cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        print("Automated...\n")
+        with psycopg2.connect(**config()) as db: 
+            # db.row_factory = sql.Row
+            cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
 #            cursor.execute("select * from user where id=?", (0,))
-#            cursor.execute("selet * from app_user where id=%s", (0,))
-#            default = cursor.fetchone()    
-#            print(f"Soil: {default[1]}\n"
-#                f"Temperature: {default[2]}\n"
-#                f"Humidity: {default[3]}\n"
-#                f"Camera: {default[4]}\n")
-#            if values['soil'] < default['soil'] and default['camera'] < user['camera']:
-#                return True
-#            elif values['temperature'] < default['temperature'] and values['humidity'] < default['humidity']:
-#                return True
-#            else:
-#                return False
-            print("Automated...\n")
-            return True
-           
-
-#        print(f"Soil: {values['soil']}\n"
-            # f"Temperature: {values['temperature']}\n"
-            # f"Humidity: {values['humidity']}\n"
-            # f"Camera: {values['camera']}\n")
+            cursor.execute("select * from sensors order by DateTaken desc limit 1")
+            values = cursor.fetchone()
+            print(f'Soil: {values[0]}\n'
+                  f'Temperature: {values[1]}\n'
+                  f'Humidity: {values[2]}\n'
+                  f'Camera: {values[3]}\n')
+            if values[0] < 4 and values[1] > 85 and values[2] < 30 and values[3] > 0.3:
+                return True
+            else:
+                return False
 
 
 class Manual(State):

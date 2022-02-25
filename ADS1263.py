@@ -422,7 +422,7 @@ class ADS1263:
 
 
     # Read ADC1 specified channel data
-    def ADS1263_GetChannalValue(self, Channel):
+    def ADS1263_GetChannelValue(self, Channel):
         if(self.ScanMode == 0):# 0  Single-ended input  8 channel1 Differential input  4 channe
             if(Channel>10):
                 return 0
