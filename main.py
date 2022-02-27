@@ -12,13 +12,10 @@ import states
 from states import Automated, Manual, Scheduler, Context
 import random
 import RPi.GPIO as GPIO
-<<<<<<< Updated upstream
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(26, GPIO.OUT)
 GPIO.setup(20, GPIO.OUT)
-=======
->>>>>>> Stashed changes
 
 class Task:
     def __init__(self):
