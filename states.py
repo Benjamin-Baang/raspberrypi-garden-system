@@ -55,6 +55,7 @@ class Automated(State):
 
 class Manual(State):
     def handle(self) -> None:
+        print("Manual...\n")
 #        with sql.connect(f'sensors.db') as db:
         with psycopg2.connect(**config()) as db:
 #            db.row_factory = sql.Row
