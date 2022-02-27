@@ -226,7 +226,7 @@ if __name__ == '__main__':
     
     ws = Tk()
     ws.title('Irrigation Controller')
-    ws.geometry('950x600')
+    ws.geometry('1280x720')
     #ws['bg']='#5d8f90'
     ws['bg']='#5b8f90'
 
@@ -262,12 +262,14 @@ if __name__ == '__main__':
 
     #==================================database Display===========================
     def display_data():
-        root=Tk()
+        root=Toplevel()
         root.title('Present SQLite Data')
         root.geometry('900x750')
 
 
         def query_database():
+            for item in my_tree.get_children():
+                my_tree.delete(item)
             with psycopg2.connect(**config()) as con:
                 cur=con.cursor()
                 cur.execute('select * from sensors')
@@ -289,7 +291,7 @@ if __name__ == '__main__':
         def data_query():
             with psycopg2.connect(**config()) as con:
                 cur=con.cursor()
-                cur.execute("select * from sensors where DateTaken < timestamp '2022-03-15 00:00:00'")
+                cur.execute("select * from sensors where DateTaken > NOW() - INTERVAL '1 minute'")
                 records=cur.fetchall()
             #add data to screen
             global inc
@@ -374,7 +376,7 @@ if __name__ == '__main__':
         lower_tree.heading("DateTaken", text="DateTaken", anchor=CENTER)
 
         Button(root,text="Display Past Weeks Data",command=data_query).pack(pady=20)
-
+        
         root.mainloop()
 
     #==============================END of datadisplay=============================
@@ -465,9 +467,9 @@ if __name__ == '__main__':
 
     button1=Button(ws, text="Automated",image = photoimage, compound = LEFT, command=automated)
     button1.grid(row=2,column=1,padx=15,pady=10)
-    button2=Button(ws, text="Manual", image = photoimage1, compound = LEFT, command=create_window)
+    button2=Button(ws, text="Manual", image = photoimage1, compound = LEFT, command=manual)
     button2.grid(row=3,column=1,padx=15,pady=10)
-    button3=Button(ws, text="Timer",image = photoimage2, compound = LEFT,command=create_window2)
+    button3=Button(ws, text="Timer",image = photoimage2, compound = LEFT,command=timer)
     button3.grid(row=4,column=1,padx=15,pady=10)
     button5=Button(ws, text=" Display Soil Graph",image=photoimage4,compound = LEFT, command=soil_graph)
     button5.grid(row=2,column=2,padx=15,pady=10)
