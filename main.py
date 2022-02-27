@@ -12,10 +12,13 @@ import states
 from states import Automated, Manual, Scheduler, Context
 import random
 import RPi.GPIO as GPIO
+<<<<<<< Updated upstream
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(26, GPIO.OUT)
 GPIO.setup(20, GPIO.OUT)
+=======
+>>>>>>> Stashed changes
 
 class Task:
     def __init__(self):
@@ -98,11 +101,9 @@ def app_listen(context: Context):
     s_flag = context.request()
     # print(s_flag)
     if s_flag:
-        print('System is activated!\n')
         GPIO.output(26, False)
         GPIO.output(20, True)
     else:
-        print('System is turned off...\n')
         GPIO.output(26, True)
         GPIO.output(20, False)
 
