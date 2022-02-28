@@ -45,6 +45,10 @@ def app_setup():
             AmPm1 varchar(2),
             AmPm2 varchar(2)
             )""")
+        cur.execute('''drop table if exists admin_user''')
+        cur.execute("""create table if not exists admin_user (
+            command smallint
+            )""")
 
 #perform an action when called
 def automated():
@@ -394,7 +398,7 @@ if __name__ == '__main__':
             dates.append(row[0])
             values.append(row[1])
 
-        plt.plot_date(dates,values,'-')
+        plt.plot_date(dates,values,'-', marker='o')
         plt.title('Soil vs Dates Taken')
         plt.xlabel('Dates Taken')
         plt.ylabel('Soil Information')
@@ -411,7 +415,7 @@ if __name__ == '__main__':
         for row in data:
             dates.append(row[0])
             values.append(row[1])
-        plt.plot_date(dates,values,'-')
+        plt.plot_date(dates,values,'-', marker='o')
         plt.title('Temperature vs Dates Taken')
         plt.xlabel('Dates Taken')
         plt.ylabel('Temperature Information')
@@ -430,7 +434,7 @@ if __name__ == '__main__':
             dates.append(row[0])
             values.append(row[1])
 
-        plt.plot_date(dates,values,'-')
+        plt.plot_date(dates,values,'-', marker='o')
         plt.title('Humidity vs Dates Taken')
         plt.xlabel('Dates Taken')
         plt.ylabel('Humidity Information')
@@ -448,12 +452,34 @@ if __name__ == '__main__':
         for row in data:
             dates.append(row[0])
             values.append(row[1])
-        plt.plot_date(dates,values,'-')
+        plt.plot_date(dates,values,'-', marker='o')
         plt.title('NDVI vs Dates Taken')
         plt.xlabel('Dates Taken')
         plt.ylabel('NDVI Value')
         plt.show()
+    def on():
+        with psycopg2.connect(**config()) as con:
+            cur = con.cursor()
+            cur.execute('select * from admin_user')
+        
+            cur.execute('insert into admin_user (command) VALUES (%s)', (1,))
+            cur.execute('select * from app_user where id=%s', (1,))
+            if cur.fetchall():
+                cur.execute('update app_user set State=%s where id=%s', ('admin', '1'))
+            else:
+                cur.execute('insert into app_user (State) VALUES (%s)', ('amdin',))
 
+    def off():
+        with psycopg2.connect(**config()) as con:
+            cur = con.cursor()
+            cur.execute('select * from admin_user')
+        
+            cur.execute('insert into admin_user (command) VALUES (%s)', (0,))
+            cur.execute('select * from app_user where id=%s', (1,))
+            if cur.fetchall():
+                cur.execute('update app_user set State=%s where id=%s', ('admin', '1'))
+            else:
+                cur.execute('insert into app_user (State) VALUES (%s)', ('amdin',))
 
 #     Button(ws, text="Automated",image = photoimage, compound = LEFT, command=automated).pack(pady=5)
 #     Button(ws, text="Manual", image = photoimage1, compound = LEFT, command=manual).pack(pady=5)
@@ -481,6 +507,11 @@ if __name__ == '__main__':
     button8.grid(row=5,column=2,padx=15,pady=10)
     button4=Button(ws, text="Exit",image = photoimage3, compound = LEFT,command=ws.destroy)
     button4.grid(row=3,column=3,padx=15,pady=10)
+    
+    buttonon=Button(ws, text="ON",image = photoimage3, compound = LEFT,command=on)
+    buttonon.grid(row=2,column=3,padx=15,pady=10)
+    buttonoff=Button(ws, text="OFF",image = photoimage3, compound = LEFT,command=off)
+    buttonoff.grid(row=3,column=3,padx=15,pady=10)
 
     button9=Button(ws, text="Display Data",image=photoimage4,compound = LEFT, command=open)
     button9.grid(row=6,column=2,padx=15,pady=10)
