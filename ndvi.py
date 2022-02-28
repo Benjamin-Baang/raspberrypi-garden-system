@@ -102,7 +102,7 @@ if __name__ == '__main__':
     # cv2.imwrite('contrasted.png', contrasted)
     # Calculate NDVI value
     ndvi = calc_ndvi(contrasted)
-    # np.savetxt("output.csv", ndvi, fmt="%.3f", delimiter=",") 
+    # np.savetxt("output.csv", ndvi, fmt="%.3f", delimiter=",")
     # display(ndvi, 'NDVI')
     # cv2.imwrite('ndvi.png', ndvi)
     # If image is too dark, increase contrast
