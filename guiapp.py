@@ -49,6 +49,7 @@ def app_setup():
         cur.execute("""create table if not exists admin_user (
             command smallint
             )""")
+        cur.execute('''insert into admin_user (command) VALUES(%s)''', (0,))
 
 #perform an action when called
 def automated():
@@ -462,24 +463,24 @@ if __name__ == '__main__':
             cur = con.cursor()
             cur.execute('select * from admin_user')
         
-            cur.execute('insert into admin_user (command) VALUES (%s)', (1,))
+            cur.execute('update admin_user set command = %s', (1,))
             cur.execute('select * from app_user where id=%s', (1,))
             if cur.fetchall():
                 cur.execute('update app_user set State=%s where id=%s', ('admin', '1'))
             else:
-                cur.execute('insert into app_user (State) VALUES (%s)', ('amdin',))
+                cur.execute('insert into app_user (State) VALUES (%s)', ('admin',))
 
     def off():
         with psycopg2.connect(**config()) as con:
             cur = con.cursor()
             cur.execute('select * from admin_user')
         
-            cur.execute('insert into admin_user (command) VALUES (%s)', (0,))
+            cur.execute('update admin_user set command = %s', (0,))
             cur.execute('select * from app_user where id=%s', (1,))
             if cur.fetchall():
                 cur.execute('update app_user set State=%s where id=%s', ('admin', '1'))
             else:
-                cur.execute('insert into app_user (State) VALUES (%s)', ('amdin',))
+                cur.execute('insert into app_user (State) VALUES (%s)', ('admin',))
 
 #     Button(ws, text="Automated",image = photoimage, compound = LEFT, command=automated).pack(pady=5)
 #     Button(ws, text="Manual", image = photoimage1, compound = LEFT, command=manual).pack(pady=5)
@@ -506,7 +507,7 @@ if __name__ == '__main__':
     button8=Button(ws, text=" Display Camera Graph",image=photoimage4,compound = LEFT, command=camera_graph)
     button8.grid(row=5,column=2,padx=15,pady=10)
     button4=Button(ws, text="Exit",image = photoimage3, compound = LEFT,command=ws.destroy)
-    button4.grid(row=3,column=3,padx=15,pady=10)
+    button4.grid(row=4,column=3,padx=15,pady=10)
     
     buttonon=Button(ws, text="ON",image = photoimage3, compound = LEFT,command=on)
     buttonon.grid(row=2,column=3,padx=15,pady=10)
