@@ -9,7 +9,7 @@ import sensors
 import datetime
 import time
 import states
-from states import Automated, Manual, Scheduler, Context
+from states import Automated, Manual, Scheduler, Admin, Context
 import random
 import RPi.GPIO as GPIO
 <<<<<<< Updated upstream
@@ -98,6 +98,8 @@ def app_listen(context: Context):
             context.set_state(Manual())
         elif user[1] == 'timer':
             context.set_state(Scheduler())
+        elif user[1] == 'admin':
+            context.set_state(Admin())
     s_flag = context.request()
     # print(s_flag)
     if s_flag:

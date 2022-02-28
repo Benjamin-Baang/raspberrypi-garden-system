@@ -113,6 +113,19 @@ class Scheduler(State):
                 return False
 
 
+class Admin(State):
+    def handle(self) -> None:
+        print("Admin...")
+        with psycopg2.coneect(**config()) as db:
+            cursor = db.surcor(cursor_factory=psycopg2.extras.DictCursor)
+            cursor.execute('select * from admin_user')
+            user = cursor.fetchone()
+            if user is not None:
+                if user[0]:
+                    return True
+                return False
+
+
 if __name__ == "__main__":
     # The client code.
 
