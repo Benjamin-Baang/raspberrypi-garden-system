@@ -12,13 +12,10 @@ import states
 from states import Automated, Manual, Scheduler, Admin, Context
 import random
 import RPi.GPIO as GPIO
-<<<<<<< Updated upstream
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(26, GPIO.OUT)
 GPIO.setup(20, GPIO.OUT)
-=======
->>>>>>> Stashed changes
 
 class Task:
     def __init__(self):
@@ -30,8 +27,8 @@ def read_sensors():
     '''
     Read all sensors except for camera
     '''
-    return sensors.read_data()
-    # return 70, 10, 3.3
+   #  return sensors.read_data()
+    return 70, 10, 3.3
 
 
 def camera_sensor():
@@ -114,8 +111,8 @@ def main():
     Main function
     '''
     task1 = Task()
-    task1.duration = 2
-    task1.elapsed_time = 2
+    task1.duration = 5
+    task1.elapsed_time = 5
     task1.funct = process_sensors
     task2 = Task()
     task2.duration = 1
