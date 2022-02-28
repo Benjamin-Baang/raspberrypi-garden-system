@@ -45,6 +45,10 @@ def app_setup():
             AmPm1 varchar(2),
             AmPm2 varchar(2)
             )""")
+        cur.execute('''drop table if exists admin_user''')
+        cur.execute("""create table if not exists admin_user (
+            command smallint
+            )""")
 
 #perform an action when called
 def automated():
@@ -394,7 +398,7 @@ if __name__ == '__main__':
             dates.append(row[0])
             values.append(row[1])
 
-        plt.plot_date(dates,values,'-')
+        plt.plot_date(dates,values,'-', marker='o')
         plt.title('Soil vs Dates Taken')
         plt.xlabel('Dates Taken')
         plt.ylabel('Soil Information')
@@ -411,7 +415,7 @@ if __name__ == '__main__':
         for row in data:
             dates.append(row[0])
             values.append(row[1])
-        plt.plot_date(dates,values,'-')
+        plt.plot_date(dates,values,'-', marker='o')
         plt.title('Temperature vs Dates Taken')
         plt.xlabel('Dates Taken')
         plt.ylabel('Temperature Information')
@@ -430,7 +434,7 @@ if __name__ == '__main__':
             dates.append(row[0])
             values.append(row[1])
 
-        plt.plot_date(dates,values,'-')
+        plt.plot_date(dates,values,'-', marker='o')
         plt.title('Humidity vs Dates Taken')
         plt.xlabel('Dates Taken')
         plt.ylabel('Humidity Information')
@@ -448,7 +452,7 @@ if __name__ == '__main__':
         for row in data:
             dates.append(row[0])
             values.append(row[1])
-        plt.plot_date(dates,values,'-')
+        plt.plot_date(dates,values,'-', marker='o')
         plt.title('NDVI vs Dates Taken')
         plt.xlabel('Dates Taken')
         plt.ylabel('NDVI Value')
