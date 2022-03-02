@@ -35,8 +35,8 @@ def camera_sensor():
     '''
     Take and read image from camera
     '''
-    ndvi.take_picture()
-    original = cv2.imread('test.png')
+    original = ndvi.take_picture()
+    # original = cv2.imread('test.png')
 #	ndvi.display(original, 'Original')
 #	original = cv2.imread('park.png')
     return average_ndvi(original)
