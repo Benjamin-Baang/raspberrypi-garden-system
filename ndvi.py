@@ -16,13 +16,17 @@ def take_picture():
     # Instantiate a camera object
     cam = PiCamera()
     # Rotate image if needed
-    # cam.rotation = 180
+    cam.rotation = 180
     # Set resolution of image
     cam.resolution = (1920, 1080)
     # Save image as file (for testing purposes)
-    cam.capture('test.png')
+    # cam.capture('test.png')
+    stream = picamera.array.PiRGBArray(cam)
+    cam.capture(stream, format='bgr', use_video_port=True)
+    original = stream.array
     cam.close()
-    return cv2.imread('test.png')
+    # return cv2.imread('test.png')
+    return original
 
 
 ''' 
@@ -101,7 +105,7 @@ if __name__ == '__main__':
     # Create/Update contrasted image file
     # cv2.imwrite('contrasted.png', contrasted)
     # Calculate NDVI value
-    ndvi = calc_ndvi(contrasted)
+    ndvi, avg = calc_ndvi(contrasted)
     # np.savetxt("output.csv", ndvi, fmt="%.3f", delimiter=",")
     # display(ndvi, 'NDVI')
     # cv2.imwrite('ndvi.png', ndvi)
@@ -111,4 +115,5 @@ if __name__ == '__main__':
     # Save NDVI array as .csv file
     # (warning - file size is about 32 MB)
     np.savetxt("output.csv", ndvi_contrasted, fmt="%.3f", delimiter=",")
+    cv2.imwrite('test.png', original)
     cv2.imwrite('ndvi_contrasted.png', ndvi_contrasted)
