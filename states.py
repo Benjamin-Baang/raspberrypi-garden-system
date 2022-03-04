@@ -47,7 +47,8 @@ class Automated(State):
                   f'Temperature: {values[1]}\n'
                   f'Humidity: {values[2]}\n'
                   f'Camera: {values[3]}\n')
-            if values[0] < 4 and values[1] > 85 and values[2] < 30 and values[3] > 0.3:
+            # if values[0] < 4 and values[1] > 85 and values[2] < 30 and values[3] > 0.3:
+            if values[0] < 4:
                 return True
             else:
                 return False
@@ -75,10 +76,11 @@ class Manual(State):
                 f"Temperature: {values[1]}\n"
                 f"Humidity: {values[2]}\n"
                 f"Camera: {values[3]}\n")
-            if values[0] < user[1] - 1.5 and values[3] < user[4]:
+            # if values[0] < user[1] - 1.5 and values[3] < user[4]:
+            if values[0] < user[1] - 0.5:
                 return True
-            elif values[1] > user[2] + 5 and values[2] < user[3] - 5:
-                return True
+            # elif values[1] > user[2] + 5 and values[2] < user[3] - 5:
+                # return True
             else:
                 return False
 
