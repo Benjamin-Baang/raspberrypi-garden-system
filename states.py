@@ -95,26 +95,30 @@ class Scheduler(State):
             cursor.execute('select * from timer where day=%s', (today,))
             user = cursor.fetchone()
             if user is not None:
+                usr_hr_strt, usr_min_strt = [int(n) for n in user[1].split(':')]
+                usr_hr_fin, usr_min_fin = [int(n) for n in user[2].split(':')]
                 print("User inputs...")
                 print(f"Day: {user[0]}\n"
-                    f"Start time: {user[1]} {user[3]}\n"
-                    f"End time: {user[2]} {user[4]}\n")
-                cur_time = int(datetime.now().strftime('%H'))
+                    f"Start time: {usr_hr_strt}:{usr_min_strt} {user[3]}\n"
+                    f"End time: {usr_hr_fin}:{usr_min_fin} {user[4]}\n")
+                cur_time = datetime.now().strftime('%H:%M')
+                cur_hour, cur_min = [int(n) for n in cur_time.split(':')]
                 # cur_ampm = datetime.now().strftime('%p')
                 if user[3] in "AMam":
-                    if user[1] == 12:
-                        user[1] -= 12
+                    if usr_hr_strt == 12:
+                        usr_hr_strt -= 12
                 else:
-                    if user[1] != 12:
-                        user[1] += 12
+                    if usr_hr_strt != 12:
+                        usr_hr_strt += 12
                 if user[4] in "AMam":
-                    if user[2] == 12:
-                        user[2] -= 12
+                    if usr_hr_fin == 12:
+                        usr_hr_fin -= 12
                 else:
-                    if user[2] != 12:
-                        user[2] += 12
-                if cur_time >= int(user[1]) and cur_time <= int(user[2]):
-                    return True
+                    if usr_hr_fin != 12:
+                        usr_hr_fin += 12
+                if cur_hour >= usr_hr_strt and cur_hour <= usr_hr_fin:
+                    if cur_min >= usr_min_strt and cur_min <= usr_hr_fin:
+                        return True
             return False
 
 
