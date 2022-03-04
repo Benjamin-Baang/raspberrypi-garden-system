@@ -22,3 +22,6 @@ dist/
 guiapp.spec
 scratch.py
 park.png
+color_mapped.csv
+color_mapped_image.png
+test_contrasted.png
