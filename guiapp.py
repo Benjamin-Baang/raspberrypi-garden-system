@@ -239,39 +239,62 @@ if __name__ == '__main__':
     l=Label(ws, text="Irrigation Controlling System", font=('Verdana', 35),bg='cyan')
     l.grid(row=0,column=2,pady=20)
 
-    l1=Label(ws, text="Choose An Option", font=('Calibri', 22),bg='light blue')
+    l1=Label(ws, text="User Option", font=('Calibri', 22),bg='light blue')
     l1.grid(row=1,column=1,padx=15,pady=25)
 
     l2=Label(ws, text="Query Data", font=('Calibri', 22),bg='light blue')
     l2.grid(row=1,column=2,pady=25)
 
-    l3=Label(ws, text="Terminate Program", font=('Calibri', 22),bg='light blue')
+    l3=Label(ws, text="Admin Option", font=('Calibri', 22),bg='light blue')
     l3.grid(row=1,column=3,pady=25)
 
     #creating a phto image object to use image
+#     automated_icon=PhotoImage(file = "images/manual.png")
+#     automated_image = automated_icon.subsample(10,10)  #resize the photo
+
+#     manual_icon=PhotoImage(file = "images/manual2.jpg")
+#     manual_image = manual_icon.subsample(10,10)
+
+#     timer_icon=PhotoImage(file = "images/timer2.jpg")
+#     timer_image = timer_icon.subsample(10,10)
+
+#     graph_icon=PhotoImage(file = "images/graph2.png")
+#     graph_image = graph_icon.subsample(10,10)
+
+#     table_icon=PhotoImage(file = "images/table2.png")
+#     table_image = table_icon.subsample(10,10)
+
+#     on_icon=PhotoImage(file = "images/on2.png")
+#     on_image = on_icon.subsample(6,6)
+
+#     off_icon=PhotoImage(file = "images/off2.png")
+#     off_image = off_icon.subsample(25,20)
+
+#     exit_icon=PhotoImage(file = "images/exit2.png")
+#     exit_image = exit_icon.subsample(6,6)
     automated_icon=PhotoImage(file = "images/manual.png")
-    automated_image = automated_icon.subsample(10,10)  #resize the photo
+    automated_image = automated_icon.subsample(7,7)  #resize the photo
 
     manual_icon=PhotoImage(file = "images/manual2.jpg")
-    manual_image = manual_icon.subsample(10,10)
+    manual_image = manual_icon.subsample(7,7)
 
     timer_icon=PhotoImage(file = "images/timer2.jpg")
-    timer_image = timer_icon.subsample(10,10)
+    timer_image = timer_icon.subsample(7,7)
 
     graph_icon=PhotoImage(file = "images/graph2.png")
-    graph_image = graph_icon.subsample(10,10)
+    graph_image = graph_icon.subsample(7,7)
 
     table_icon=PhotoImage(file = "images/table2.png")
-    table_image = table_icon.subsample(10,10)
+    table_image = table_icon.subsample(7,7)
 
     on_icon=PhotoImage(file = "images/on2.png")
-    on_image = on_icon.subsample(6,6)
+    on_image = on_icon.subsample(3,4)
 
     off_icon=PhotoImage(file = "images/off2.png")
-    off_image = off_icon.subsample(25,20)
+    off_image = off_icon.subsample(15,9)
 
     exit_icon=PhotoImage(file = "images/exit2.png")
-    exit_image = exit_icon.subsample(6,6)
+    exit_image = exit_icon.subsample(4,5)
 
 
     #==================================database Display===========================
