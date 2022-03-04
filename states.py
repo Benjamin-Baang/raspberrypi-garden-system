@@ -87,7 +87,8 @@ class Scheduler(State):
     def handle(self) -> None:
         print("Timer...")
         today = datetime.now().strftime('%A')
-        print(f"Today is {today}.")
+        c_time = datetime.now().strftime('%H:%M')
+        print(f"Today is {today} {c_time}.")
         with psycopg2.connect(**config()) as db:
 #            db.row_factory = sql.Row
             cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -117,8 +118,9 @@ class Scheduler(State):
                     if usr_hr_fin != 12:
                         usr_hr_fin += 12
                 if cur_hour >= usr_hr_strt and cur_hour <= usr_hr_fin:
-                    if cur_min >= usr_min_strt and cur_min <= usr_hr_fin:
-                        return True
+                    if cur_min >= usr_min_strt:
+                        if cur_min < usr_min_fin or usr_min_fin == 0:
+                            return True
             return False
 
 
