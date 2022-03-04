@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from picamera import PiCamera
 import picamera.array
+from fastiecm import fastiecm
 
 
 # Load a specific image (for testing purposes)
@@ -18,7 +19,8 @@ def take_picture():
     # Rotate image if needed
     cam.rotation = 180
     # Set resolution of image
-    cam.resolution = (1920, 1080)
+    # cam.resolution = (1920, 1080)
+    cam.resolution = (800, 600)
     # Save image as file (for testing purposes)
     # cam.capture('test.png')
     stream = picamera.array.PiRGBArray(cam)
@@ -26,7 +28,7 @@ def take_picture():
     original = stream.array
     cam.close()
     # return cv2.imread('test.png')
-    return original
+    return original.astype(np.uint8)
 
 
 ''' 
@@ -93,11 +95,15 @@ def calc_ndvi(image):
     # Save NDVI array as .csv file
     # (warning - file size is about 32 MB)
     # Return NDVI value
-    return ndvi, np.mean(ndvi)
+    print(f'Mean: {np.mean(ndvi)}')
+    print(f'Median: {np.median(ndvi)}')
+    print(f'Max: {ndvi.max()}')
+    return ndvi, np.percentile(ndvi, 70), np.percentile(ndvi, 95)
 
 
 if __name__ == '__main__':
-    original = take_picture()
+    # original = take_picture()
+    original = cv2.imread('test.png').astype(float)
     print("Picture taken!")
     # display(original, 'Original')
     contrasted = contrast_stretch(original)
@@ -105,7 +111,8 @@ if __name__ == '__main__':
     # Create/Update contrasted image file
     # cv2.imwrite('contrasted.png', contrasted)
     # Calculate NDVI value
-    ndvi, avg = calc_ndvi(contrasted)
+    ndvi, p1, p2 = calc_ndvi(contrasted) 
+    print("P1: ", p1, "\nP2: ", p2)
     # np.savetxt("output.csv", ndvi, fmt="%.3f", delimiter=",")
     # display(ndvi, 'NDVI')
     # cv2.imwrite('ndvi.png', ndvi)
@@ -114,6 +121,11 @@ if __name__ == '__main__':
     # display(ndvi_contrasted, 'NDVI Contrasted')
     # Save NDVI array as .csv file
     # (warning - file size is about 32 MB)
-    np.savetxt("output.csv", ndvi_contrasted, fmt="%.3f", delimiter=",")
+    np.savetxt("output.csv", ndvi, fmt="%.3f", delimiter=",")
+    color_mapped_prep = ndvi_contrasted.astype(np.uint8)
+    color_mapped_image = cv2.applyColorMap(color_mapped_prep, cmapy.cmap('Reds'))
+    cv2.imwrite('color_mapped_image.png', color_mapped_image)
+    np.savetxt("color_mapped.csv", color_mapped_prep, fmt="%.3f", delimiter=",")
     cv2.imwrite('test.png', original)
+    cv2.imwrite('test_contrasted.png', contrasted)
     cv2.imwrite('ndvi_contrasted.png', ndvi_contrasted)
