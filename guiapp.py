@@ -546,7 +546,7 @@ if __name__ == '__main__':
     buttonoff=Button(ws, text="OFF",image = off_image, compound = LEFT,command=off)
     buttonoff.grid(row=3,column=3,padx=15,pady=10)
 
-    button9=Button(ws, text="Display Data",image=table_image,compound = LEFT, command=open)
+    button9=Button(ws, text="Display Data",image=table_image,compound = LEFT, command=display_data)
     button9.grid(row=6,column=2,padx=15,pady=10)
 
 
