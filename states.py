@@ -99,18 +99,23 @@ class Scheduler(State):
                 print(f"Day: {user[0]}\n"
                     f"Start time: {user[1]} {user[3]}\n"
                     f"End time: {user[2]} {user[4]}\n")
-                ctime = int(datetime.now().strftime('%I'))
-                campm = datetime.now().strftime('%p')
-                if ctime >= int(user[2]) and campm in user[4]:
-                    if ctime == 12: 
-                        return True
-                    return False
-                if ctime >= int(user[1]) and campm in user[3]:
-                    return True
+                cur_time = int(datetime.now().strftime('%H'))
+                # cur_ampm = datetime.now().strftime('%p')
+                if user[3] in "AMam":
+                    if user[1] == 12:
+                        user[1] -= 12
                 else:
-                    return False
-            else:
-                return False
+                    if user[1] != 12:
+                        user[1] += 12
+                if user[4] in "AMam":
+                    if user[2] == 12:
+                        user[2] -= 12
+                else:
+                    if user[2] != 12:
+                        user[2] += 12
+                if cur_time >= int(user[1]) and cur_time <= int(user[2]):
+                    return True
+            return False
 
 
 class Admin(State):
