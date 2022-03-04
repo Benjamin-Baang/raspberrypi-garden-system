@@ -123,7 +123,7 @@ if __name__ == '__main__':
     # (warning - file size is about 32 MB)
     np.savetxt("output.csv", ndvi, fmt="%.3f", delimiter=",")
     color_mapped_prep = ndvi_contrasted.astype(np.uint8)
-    color_mapped_image = cv2.applyColorMap(color_mapped_prep, cmapy.cmap('Reds'))
+    color_mapped_image = cv2.applyColorMap(color_mapped_prep, fastiecm)
     cv2.imwrite('color_mapped_image.png', color_mapped_image)
     np.savetxt("color_mapped.csv", color_mapped_prep, fmt="%.3f", delimiter=",")
     cv2.imwrite('test.png', original)
