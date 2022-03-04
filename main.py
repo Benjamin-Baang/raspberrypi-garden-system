@@ -48,7 +48,7 @@ def average_ndvi(image):
     Calculate average NDVI value
     '''
     im = ndvi.contrast_stretch(image)
-    im,avg = ndvi.calc_ndvi(im)
+    im,avg,p2 = ndvi.calc_ndvi(im)
    # total_sum = 0
    # count = 0
    # for row in im:
