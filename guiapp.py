@@ -249,20 +249,29 @@ if __name__ == '__main__':
     l3.grid(row=1,column=3,pady=25)
 
     #creating a phto image object to use image
-    photo=PhotoImage(file = "images/manual.jpg")
-    photoimage = photo.subsample(4,4)  #resize the photo
+    automated_icon=PhotoImage(file = "images/manual.png")
+    automated_image = automated_icon.subsample(10,10)  #resize the photo
 
-    photo1=PhotoImage(file = "images/manual.jpg")
-    photoimage1 = photo1.subsample(4,4)
+    manual_icon=PhotoImage(file = "images/manual2.jpg")
+    manual_image = manual_icon.subsample(10,10)
 
-    photo2=PhotoImage(file = "images/manual.jpg")
-    photoimage2 = photo2.subsample(4,4)
+    timer_icon=PhotoImage(file = "images/timer2.jpg")
+    timer_image = timer_icon.subsample(10,10)
 
-    photo3=PhotoImage(file = "images/manual.jpg")
-    photoimage3 = photo3.subsample(4,4)
+    graph_icon=PhotoImage(file = "images/graph2.png")
+    graph_image = graph_icon.subsample(10,10)
 
-    photo3=PhotoImage(file = "images/manual.jpg")
-    photoimage4 = photo3.subsample(4,4)
+    table_icon=PhotoImage(file = "images/table2.png")
+    table_image = table_icon.subsample(10,10)
+
+    on_icon=PhotoImage(file = "images/on2.png")
+    on_image = on_icon.subsample(6,6)
+
+    off_icon=PhotoImage(file = "images/off2.png")
+    off_image = off_icon.subsample(25,20)
+
+    exit_icon=PhotoImage(file = "images/exit2.png")
+    exit_image = exit_icon.subsample(6,6)
 
 
     #==================================database Display===========================
@@ -492,29 +501,29 @@ if __name__ == '__main__':
 #     Button(ws, text=" Display Camera Graph",image=photoimage4,compound = LEFT, command=camera_graph).pack(pady=5)
 #     Button(ws, text="Display Data",image=photoimage4,compound = LEFT, command=display_data).pack(pady=5)
 
-    button1=Button(ws, text="Automated",image = photoimage, compound = LEFT, command=automated)
+    button1=Button(ws, text="Automated",image = automated_image, compound = LEFT, command=automated)
     button1.grid(row=2,column=1,padx=15,pady=10)
-    button2=Button(ws, text="Manual", image = photoimage1, compound = LEFT, command=manual)
+    button2=Button(ws, text="Manual", image = manual_image, compound = LEFT, command=manual)
     button2.grid(row=3,column=1,padx=15,pady=10)
-    button3=Button(ws, text="Timer",image = photoimage2, compound = LEFT,command=timer)
+    button3=Button(ws, text="Timer",image = timer_image, compound = LEFT,command=timer)
     button3.grid(row=4,column=1,padx=15,pady=10)
-    button5=Button(ws, text=" Display Soil Graph",image=photoimage4,compound = LEFT, command=soil_graph)
+    button5=Button(ws, text=" Display Soil Graph",image=graph_image,compound = LEFT, command=soil_graph)
     button5.grid(row=2,column=2,padx=15,pady=10)
-    button6=Button(ws, text=" Display Temperature Graph",image=photoimage4,compound = LEFT, command=temperature_graph)
+    button6=Button(ws, text=" Display Temperature Graph",image=graph_image,compound = LEFT, command=temperature_graph)
     button6.grid(row=3,column=2,padx=15,pady=10)
-    button7=Button(ws, text=" Display Humidity Graph",image=photoimage4,compound = LEFT, command=humidity_graph)
+    button7=Button(ws, text=" Display Humidity Graph",image=graph_image,compound = LEFT, command=humidity_graph)
     button7.grid(row=4,column=2,padx=15,pady=10)
-    button8=Button(ws, text=" Display Camera Graph",image=photoimage4,compound = LEFT, command=camera_graph)
+    button8=Button(ws, text=" Display Camera Graph",image=graph_image,compound = LEFT, command=camera_graph)
     button8.grid(row=5,column=2,padx=15,pady=10)
-    button4=Button(ws, text="Exit",image = photoimage3, compound = LEFT,command=ws.destroy)
+    button4=Button(ws, text="Exit",image = exit_image, compound = LEFT,command=ws.destroy)
     button4.grid(row=4,column=3,padx=15,pady=10)
     
-    buttonon=Button(ws, text="ON",image = photoimage3, compound = LEFT,command=on)
+    buttonon=Button(ws, text="ON",image = on_image, compound = LEFT,command=on)
     buttonon.grid(row=2,column=3,padx=15,pady=10)
-    buttonoff=Button(ws, text="OFF",image = photoimage3, compound = LEFT,command=off)
+    buttonoff=Button(ws, text="OFF",image = off_image, compound = LEFT,command=off)
     buttonoff.grid(row=3,column=3,padx=15,pady=10)
 
-    button9=Button(ws, text="Display Data",image=photoimage4,compound = LEFT, command=open)
+    button9=Button(ws, text="Display Data",image=table_image,compound = LEFT, command=open)
     button9.grid(row=6,column=2,padx=15,pady=10)
 
 
