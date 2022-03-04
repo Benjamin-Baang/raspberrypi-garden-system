@@ -40,8 +40,8 @@ def app_setup():
         cur.execute('''drop table if exists timer''')
         cur.execute("""create table if not exists timer (
             day TEXT,
-            STime real,
-            FTime real,
+            STime TEXT,
+            FTime TEXT,
             AmPm1 varchar(2),
             AmPm2 varchar(2)
             )""")
