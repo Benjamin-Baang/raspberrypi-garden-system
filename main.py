@@ -75,8 +75,8 @@ def process_sensors(context: Context):
     # humidity = random.randint(30, 80)
     # soil_moisture = round(random.uniform(1, 10), 1)
     temperature, humidity, soil_moisture = read_sensors()
-   # avg = round(random.uniform(0, 1), 2)
-    avg = camera_sensor()
+    avg = round(random.uniform(0, 1), 2)
+    # avg = camera_sensor()
     update_database(soil_moisture, temperature, humidity, avg)
     
 def app_listen(context: Context):
@@ -100,9 +100,11 @@ def app_listen(context: Context):
     s_flag = context.request()
     # print(s_flag)
     if s_flag:
+        print("System activates!\n")
         GPIO.output(26, False)
         GPIO.output(20, True)
     else:
+        print("System shuts down...\n")
         GPIO.output(26, True)
         GPIO.output(20, False)
 
