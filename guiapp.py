@@ -28,7 +28,7 @@ def app_setup():
                             )''')
         cur.execute("select * from app_user")
         if cur.fetchone() is None:
-            cur.execute("insert into app_user (id, State) VALUES(%s, %s)", (0, 'automatic'))
+            cur.execute("insert into app_user (id, State) VALUES(%s, %s)", (0, 'admin'))
         cur.execute('''drop table if exists manual''')
         cur.execute("""create table if not exists manual (
             id serial primary key,
@@ -234,19 +234,20 @@ if __name__ == '__main__':
     ws.geometry('1280x720')
     #ws['bg']='#5d8f90'
     ws['bg']='#5b8f90'
+    ws.minsize(800,600)
 
     #l=Label(ws, text="Irrigation Controlling System", font=('Verdana', 18)).pack(side=TOP, pady=10)
     l=Label(ws, text="Irrigation Controlling System", font=('Verdana', 35),bg='cyan')
-    l.grid(row=0,column=2,pady=20)
+    l.grid(row=0,columnspan=3,pady=20)
 
     l1=Label(ws, text="User Option", font=('Calibri', 22),bg='light blue')
-    l1.grid(row=1,column=1,padx=15,pady=25)
+    l1.grid(row=1,column=0,padx=15,pady=25)
 
     l2=Label(ws, text="Query Data", font=('Calibri', 22),bg='light blue')
-    l2.grid(row=1,column=2,pady=25)
+    l2.grid(row=1,column=1,pady=25)
 
     l3=Label(ws, text="Admin Option", font=('Calibri', 22),bg='light blue')
-    l3.grid(row=1,column=3,pady=25)
+    l3.grid(row=1,column=2,pady=25)
 
     #creating a phto image object to use image
 #     automated_icon=PhotoImage(file = "images/manual.png")
@@ -301,7 +302,7 @@ if __name__ == '__main__':
     def display_data():
         root=Toplevel()
         root.title('Present SQLite Data')
-        root.geometry('900x750')
+        root.geometry('800x600')
 
 
         def query_database():
@@ -326,6 +327,8 @@ if __name__ == '__main__':
 
 
         def data_query():
+            for item in lower_tree.get_children():
+                lower_tree.delete(item)
             with psycopg2.connect(**config()) as con:
                 cur=con.cursor()
                 cur.execute("select * from sensors where DateTaken > NOW() - INTERVAL '1 minute'")
@@ -524,30 +527,44 @@ if __name__ == '__main__':
 #     Button(ws, text=" Display Camera Graph",image=photoimage4,compound = LEFT, command=camera_graph).pack(pady=5)
 #     Button(ws, text="Display Data",image=photoimage4,compound = LEFT, command=display_data).pack(pady=5)
 
+    ws.grid_rowconfigure(0, weight=1)
+    ws.grid_rowconfigure(1, weight=1)
+    ws.grid_rowconfigure(2, weight=1)
+    ws.grid_rowconfigure(3, weight=1)
+    ws.grid_rowconfigure(4, weight=1)
+    ws.grid_rowconfigure(5, weight=1)
+    ws.grid_rowconfigure(6, weight=1)
+    
+    ws.grid_columnconfigure(0, weight=1, minsize=200)
+    ws.grid_columnconfigure(1, weight=1, minsize=250)
+    ws.grid_columnconfigure(2, weight=1, minsize=200)
+
     button1=Button(ws, text="Automated",image = automated_image, compound = LEFT, command=automated)
-    button1.grid(row=2,column=1,padx=15,pady=10)
+    button1.grid(row=2,column=0,padx=15,pady=10)
+    button1.config()
     button2=Button(ws, text="Manual", image = manual_image, compound = LEFT, command=manual)
-    button2.grid(row=3,column=1,padx=15,pady=10)
+    button2.grid(row=3,column=0,padx=15,pady=10)
     button3=Button(ws, text="Timer",image = timer_image, compound = LEFT,command=timer)
-    button3.grid(row=4,column=1,padx=15,pady=10)
+    button3.grid(row=4,column=0,padx=15,pady=10)
     button5=Button(ws, text=" Display Soil Graph",image=graph_image,compound = LEFT, command=soil_graph)
-    button5.grid(row=2,column=2,padx=15,pady=10)
+    button5.grid(row=2,column=1,padx=15,pady=10)
     button6=Button(ws, text=" Display Temperature Graph",image=graph_image,compound = LEFT, command=temperature_graph)
-    button6.grid(row=3,column=2,padx=15,pady=10)
+    button6.grid(row=3,column=1,padx=15,pady=10)
     button7=Button(ws, text=" Display Humidity Graph",image=graph_image,compound = LEFT, command=humidity_graph)
-    button7.grid(row=4,column=2,padx=15,pady=10)
+    button7.grid(row=4,column=1,padx=15,pady=10)
     button8=Button(ws, text=" Display Camera Graph",image=graph_image,compound = LEFT, command=camera_graph)
-    button8.grid(row=5,column=2,padx=15,pady=10)
+    button8.grid(row=5,column=1,padx=15,pady=10)
     button4=Button(ws, text="Exit",image = exit_image, compound = LEFT,command=ws.destroy)
-    button4.grid(row=4,column=3,padx=15,pady=10)
+    button4.grid(row=4,column=2,padx=15,pady=10)
     
     buttonon=Button(ws, text="ON",image = on_image, compound = LEFT,command=on)
-    buttonon.grid(row=2,column=3,padx=15,pady=10)
+    buttonon.grid(row=2,column=2,padx=15,pady=10)
     buttonoff=Button(ws, text="OFF",image = off_image, compound = LEFT,command=off)
-    buttonoff.grid(row=3,column=3,padx=15,pady=10)
+    buttonoff.grid(row=3,column=2,padx=15,pady=10)
 
     button9=Button(ws, text="Display Data",image=table_image,compound = LEFT, command=display_data)
-    button9.grid(row=6,column=2,padx=15,pady=10)
+    button9.grid(row=6,column=1,padx=15,pady=10)
+    button9.config(width=400)
 
 
 
