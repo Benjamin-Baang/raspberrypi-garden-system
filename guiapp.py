@@ -3,10 +3,8 @@ import tkinter.ttk as ttk
 import psycopg2
 from config_db import config
 import matplotlib.pyplot as plt
-# import matplotlib.dates as mdates
-# from dateutil import parser
 
-#perform an action when called
+
 def automated():
     with psycopg2.connect(**config()) as con:
         cur = con.cursor()
@@ -38,7 +36,6 @@ def manual():
         entry4.delete(0,END)
 
 
-    #To display data
     def query():
         with psycopg2.connect(**config()) as con:
             cur = con.cursor()
@@ -86,7 +83,6 @@ def manual():
 
 def timer():
     def submit():
-        #con=sqlite3.connect("sensors.db")
         with psycopg2.connect(**config()) as con:
             cur=con.cursor()
             cur.execute('select * from app_user where id=%s', (1,))
@@ -105,28 +101,23 @@ def timer():
         stime.delete(0,END)
         ftime.delete(0,END)
 
+
     def query():
-        #con=sqlite3.connect("sensors.db")
         with psycopg2.connect(**config()) as con:
             cur=con.cursor()
 
             cur.execute("SELECT * FROM timer")
-            #cur.execute("select * from timer2 where id=?", (1,))
             r=cur.fetchall()
             show=''
             for info in r:
                 show=show + str(info)+"\n"
-
             c_label=Label(new_window,text=show).grid(row=7)
-
 
     new_window=Toplevel()
     new_window.geometry('500x450')
 
-
     l1=Label(new_window, text="Choose A Day Of the Week: ")
     l1.grid(row=0,column=0, padx=5, pady=10)
-
 
     options = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
     days=StringVar()
@@ -134,10 +125,8 @@ def timer():
     days_menu=OptionMenu(new_window, days, *options)
     days_menu.grid(row=0, column=1)
 
-
     A=Label(new_window,text="From: ")
     A.grid(row=1,column=1,pady=15)
-
 
     l2=Label(new_window, text="BEGINNING Time: ")
     l2.grid(row=2,column=0, padx=5, pady=10)
@@ -148,13 +137,11 @@ def timer():
     Aampm=Label(new_window, text="12-Hour Clock: ")
     Aampm.grid(row=3,column=0)
     
-    #============================
     options1 = ["AM","PM"]
     ampm1=StringVar()
     ampm1.set("AM")
     ampm1_menu=OptionMenu(new_window, ampm1, *options1)
     ampm1_menu.grid(row=3,column=1)
-    #===================
 
     B=Label(new_window,text="To: ")
     B.grid(row=4,column=1,pady=15)
@@ -185,11 +172,9 @@ if __name__ == '__main__':
     ws = Tk()
     ws.title('Irrigation Controller')
     ws.geometry('1280x720')
-    #ws['bg']='#5d8f90'
     ws['bg']='#5b8f90'
     ws.minsize(800,600)
 
-    #l=Label(ws, text="Irrigation Controlling System", font=('Verdana', 18)).pack(side=TOP, pady=10)
     l=Label(ws, text="Irrigation Controlling System", font=('Verdana', 35),bg='cyan')
     l.grid(row=0,columnspan=3,pady=20)
 
@@ -201,31 +186,7 @@ if __name__ == '__main__':
 
     l3=Label(ws, text="Admin Option", font=('Calibri', 22),bg='light blue')
     l3.grid(row=1,column=2,pady=25)
-
-    #creating a phto image object to use image
-#     automated_icon=PhotoImage(file = "images/manual.png")
-#     automated_image = automated_icon.subsample(10,10)  #resize the photo
-
-#     manual_icon=PhotoImage(file = "images/manual2.jpg")
-#     manual_image = manual_icon.subsample(10,10)
-
-#     timer_icon=PhotoImage(file = "images/timer2.jpg")
-#     timer_image = timer_icon.subsample(10,10)
-
-#     graph_icon=PhotoImage(file = "images/graph2.png")
-#     graph_image = graph_icon.subsample(10,10)
-
-#     table_icon=PhotoImage(file = "images/table2.png")
-#     table_image = table_icon.subsample(10,10)
-
-#     on_icon=PhotoImage(file = "images/on2.png")
-#     on_image = on_icon.subsample(6,6)
-
-#     off_icon=PhotoImage(file = "images/off2.png")
-#     off_image = off_icon.subsample(25,20)
-
-#     exit_icon=PhotoImage(file = "images/exit2.png")
-#     exit_image = exit_icon.subsample(6,6)
+    
     automated_icon=PhotoImage(file = "images/manual.png")
     automated_image = automated_icon.subsample(7,7)  #resize the photo
 
@@ -251,11 +212,10 @@ if __name__ == '__main__':
     exit_image = exit_icon.subsample(4,5)
 
 
-    #==================================database Display===========================
     def display_data():
         root=Toplevel()
         root.title('Present SQLite Data')
-        root.geometry('800x600')
+        root.geometry('800x800')
 
 
         def query_database():
@@ -266,17 +226,14 @@ if __name__ == '__main__':
                 cur.execute('select * from sensors')
                 records=cur.fetchall()
         
-            #add data to screen
             global inc
             inc=0
             for record in records:
-                    if inc%2==0:   #if even row
+                    if inc%2==0: 
                         my_tree.insert(parent='',index='end',iid=inc,text='',values=(record[0],record[1],record[2],record[3],record[4]),tags=('evenrow',))
                     else:
                         my_tree.insert(parent='',index='end',iid=inc,text='',values=(record[0],record[1],record[2],record[3],record[4]),tags=('oddrow',))
                     inc+=1
-            con.commit()
-            con.close()
 
 
         def data_query():
@@ -286,54 +243,41 @@ if __name__ == '__main__':
                 cur=con.cursor()
                 cur.execute("select * from sensors where datetaken > NOW() - INTERVAL '1 minute'")
                 records=cur.fetchall()
-            #add data to screen
+            
             global inc
             inc=0
             for record in records:
-                    if inc%2==0:   #if even row
+                    if inc%2==0:
                         lower_tree.insert(parent='',index='end',iid=inc,text='',values=(record[0],record[1],record[2],record[3],record[4]),tags=('evenrow',))
                     else:
                         lower_tree.insert(parent='',index='end',iid=inc,text='',values=(record[0],record[1],record[2],record[3],record[4]),tags=('oddrow',))
                     inc+=1
-            con.commit()
-            con.close()
     
-        #=========================================================
 
-        #create style
         style=ttk.Style()
-        #create theme
         style.theme_use('default')
-        #configure Treeview colors
         style.configure("Treeview", 
             background="#D3D3D5",
             foreground="black",
             rowheight=25,
             fieldbackground="#D3D3D5")
-        #change color
         style.map('Treeview', background=[('selected', "#347083")])
-        #create frame
         tree_frame=Frame(root)
         tree_frame.pack(pady=20)
-        #create scrollbar
         tree_scroll=Scrollbar(tree_frame)
         tree_scroll.pack(side=RIGHT, fill=Y)
-        #create treeview
         my_tree=ttk.Treeview(tree_frame, yscrollcommand=tree_scroll.set, selectmode="extended")
         my_tree.pack()
-        #configure scrollbar
         tree_scroll.config(command=my_tree.yview)
-        #define colums
         my_tree['columns']=("soil","temperature","humidity","camera","DateTaken")   
 
-        #position columns
         my_tree.column("#0", width=0, stretch=NO)
         my_tree.column("soil", anchor=CENTER, width=150)
         my_tree.column("temperature", anchor=CENTER, width=130)
         my_tree.column("humidity", anchor=CENTER, width=130)
         my_tree.column("camera", anchor=CENTER, width=130)
         my_tree.column("DateTaken", anchor=CENTER, width=180)
-        #Create Headings
+        
         my_tree.heading("#0", text="", anchor=W)
         my_tree.heading("soil", text="soil", anchor=CENTER)
         my_tree.heading("temperature", text="temperature", anchor=CENTER)
@@ -344,23 +288,19 @@ if __name__ == '__main__':
         my_tree.tag_configure('oddrow', background="white")
         my_tree.tag_configure('evenrow',background="lightblue")
 
-
         Button(root,text="Display Data",command=query_database).pack(pady=20)
-        #query_database()
 
-        #A second Treeview
         lower_tree = ttk.Treeview(root)
         lower_tree.pack()
-        #define colums
         lower_tree['columns']=("soil","temperature","humidity","camera","DateTaken")
-        #position columns
+        
         lower_tree.column("#0", width=0, stretch=NO)
         lower_tree.column("soil", anchor=CENTER, width=150)
         lower_tree.column("temperature", anchor=CENTER, width=130)
         lower_tree.column("humidity", anchor=CENTER, width=130)
         lower_tree.column("camera", anchor=CENTER, width=130)
         lower_tree.column("DateTaken", anchor=CENTER, width=180)
-        #Create Headings
+        
         lower_tree.heading("#0", text="", anchor=W)
         lower_tree.heading("soil", text="soil", anchor=CENTER)
         lower_tree.heading("temperature", text="temperature", anchor=CENTER)
@@ -371,8 +311,8 @@ if __name__ == '__main__':
         Button(root,text="Display Past Weeks Data",command=data_query).pack(pady=20)
         
         root.mainloop()
-
     #==============================END of datadisplay=============================
+
 
     def soil_graph():
         with psycopg2.connect(**config()) as con:
@@ -392,6 +332,8 @@ if __name__ == '__main__':
         plt.xlabel('Dates Taken')
         plt.ylabel('Soil Information')
         plt.show()
+        
+    
     def temperature_graph():
         with psycopg2.connect(**config()) as con:
             cur=con.cursor()
@@ -410,6 +352,7 @@ if __name__ == '__main__':
         plt.ylabel('Temperature Information')
         plt.show()
         
+    
     def humidity_graph():
         with psycopg2.connect(**config()) as con:
             cur=con.cursor()
@@ -429,6 +372,7 @@ if __name__ == '__main__':
         plt.ylabel('Humidity Information')
         plt.show()
         
+    
     def camera_graph():
         with psycopg2.connect(**config()) as con:
             cur=con.cursor()
@@ -446,6 +390,8 @@ if __name__ == '__main__':
         plt.xlabel('Dates Taken')
         plt.ylabel('NDVI Value')
         plt.show()
+    
+    
     def on():
         with psycopg2.connect(**config()) as con:
             cur = con.cursor()
@@ -457,6 +403,7 @@ if __name__ == '__main__':
                 cur.execute('update app_user set State=%s where id=%s', ('admin', '1'))
             else:
                 cur.execute('insert into app_user (State) VALUES (%s)', ('admin',))
+
 
     def off():
         with psycopg2.connect(**config()) as con:
@@ -470,15 +417,6 @@ if __name__ == '__main__':
             else:
                 cur.execute('insert into app_user (State) VALUES (%s)', ('admin',))
 
-#     Button(ws, text="Automated",image = photoimage, compound = LEFT, command=automated).pack(pady=5)
-#     Button(ws, text="Manual", image = photoimage1, compound = LEFT, command=manual).pack(pady=5)
-#     Button(ws, text="Timer",image = photoimage2, compound = LEFT,command=timer).pack(pady=5)
-#     Button(ws, text="Exit",image = photoimage3, compound = LEFT,command=ws.destroy).pack(pady=5)
-#     Button(ws, text=" Display Soil Graph",image=photoimage4,compound = LEFT, command=soil_graph).pack(pady=5)
-#     Button(ws, text=" Display Temperature Graph",image=photoimage4,compound = LEFT, command=temperature_graph).pack(pady=5)
-#     Button(ws, text=" Display Humidity Graph",image=photoimage4,compound = LEFT, command=humidity_graph).pack(pady=5)
-#     Button(ws, text=" Display Camera Graph",image=photoimage4,compound = LEFT, command=camera_graph).pack(pady=5)
-#     Button(ws, text="Display Data",image=photoimage4,compound = LEFT, command=display_data).pack(pady=5)
 
     ws.grid_rowconfigure(0, weight=1)
     ws.grid_rowconfigure(1, weight=1)
@@ -494,7 +432,6 @@ if __name__ == '__main__':
 
     button1=Button(ws, text="Automated",image = automated_image, compound = LEFT, command=automated)
     button1.grid(row=2,column=0,padx=15,pady=10)
-    button1.config()
     button2=Button(ws, text="Manual", image = manual_image, compound = LEFT, command=manual)
     button2.grid(row=3,column=0,padx=15,pady=10)
     button3=Button(ws, text="Timer",image = timer_image, compound = LEFT,command=timer)
@@ -518,8 +455,5 @@ if __name__ == '__main__':
     button9=Button(ws, text="Display Data",image=table_image,compound = LEFT, command=display_data)
     button9.grid(row=6,column=1,padx=15,pady=10)
     button9.config(width=400)
-
-
-
 
     ws.mainloop()
