@@ -1,6 +1,16 @@
 from configparser import ConfigParser
 
 def config(filename='database.ini', section='postgresql'):
+    import socket
+    with open(filename, "r+") as f:
+        lines = f.readlines()
+        hostname = "bpi.local"
+        ip_address = socket.gethostbyname(hostname)
+        lines[1] = ''
+        lines[1] = f'host={ip_address}\n'
+        f.seek(0)
+        f.writelines(lines)
+    
     # create a parser
     parser = ConfigParser()
     # read config file
