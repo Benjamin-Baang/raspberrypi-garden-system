@@ -27,8 +27,8 @@ def read_sensors():
     '''
     Read all sensors except for camera
     '''
-   #  return sensors.read_data()
-    return 70, 10, 3.3
+    return sensors.read_data()
+    # return 70, 10, 3.3
 
 
 def camera_sensor():
@@ -64,6 +64,9 @@ def update_database(soil_moisture, temperature, humidity, camera):
     '''
     with psycopg2.connect(**config()) as database:
         cursor = database.cursor()
+        if camera == -2:
+            cursor.execute("select camera from sensors order by datetaken desc limit 5")
+            camera = cursor.fetchone()
         cursor.execute("insert into sensors (soil, temperature, humidity, camera, DateTaken) VALUES(%s, %s, %s, %s, %s)", (soil_moisture, temperature, humidity, camera, currentDateTime))
     return None
 
@@ -75,10 +78,23 @@ def process_sensors(context: Context):
     # humidity = random.randint(30, 80)
     # soil_moisture = round(random.uniform(1, 10), 1)
     temperature, humidity, soil_moisture = read_sensors()
-    avg = round(random.uniform(0, 1), 2)
     # avg = camera_sensor()
-    update_database(soil_moisture, temperature, humidity, avg)
+    update_database(soil_moisture, temperature, humidity, -2)
+
     
+def process_sensors_with_camera(context: Context):
+    global currentDateTime
+    currentDateTime=str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    random.seed()
+    # temperature = random.randint(50, 100)
+    # humidity = random.randint(30, 80)
+    # soil_moisture = round(random.uniform(1, 10), 1)
+    temperature, humidity, soil_moisture = read_sensors()
+    # avg = round(random.uniform(0,1),2)
+    avg = camera_sensor()
+    update_database(soil_moisture, temperature, humidity, avg)
+
+
 def app_listen(context: Context):
     with psycopg2.connect(**config()) as db:
         cursor = db.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -117,16 +133,22 @@ def main():
     task1.elapsed_time = 5
     task1.funct = process_sensors
     task2 = Task()
-    task2.duration = 1
-    task2.elapsed_time = 0
-    task2.funct = app_listen
+    task2.duration = 30
+    task2.elapsed_time = 30
+    task2.funct = process_sensors_with_camera
+    task3 = Task()
+    task3.duration = 1
+    task3.elapsed_time = 0
+    task3.funct = app_listen
     
-    tasks = [task1, task2]
+    tasks = [task1, task2, task3]
     
     context = Context(Automated())
     
     while True:
         for task in tasks:
+            if task2.elapsed_time == 30:
+                task1.elapsed_time = -1
             if task.elapsed_time >= task.duration - 1:
                 task.funct(context)
                 task.elapsed_time = 0

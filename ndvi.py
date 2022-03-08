@@ -102,8 +102,8 @@ def calc_ndvi(image):
 
 
 if __name__ == '__main__':
-    # original = take_picture()
-    original = cv2.imread('test.png').astype(float)
+    original = take_picture()
+    # original = cv2.imread('test.png').astype(float)
     print("Picture taken!")
     # display(original, 'Original')
     contrasted = contrast_stretch(original)
@@ -127,5 +127,10 @@ if __name__ == '__main__':
     cv2.imwrite('color_mapped_image.png', color_mapped_image)
     np.savetxt("color_mapped.csv", color_mapped_prep, fmt="%.3f", delimiter=",")
     cv2.imwrite('test.png', original)
+    # for i in range(1,10):
+    #     print(original[0][i], sep=" ")
+    # print()
+    b,g,r = cv2.split(original)
+    np.savetxt('test.csv', g, fmt='%.3f', delimiter=',')
     cv2.imwrite('test_contrasted.png', contrasted)
     cv2.imwrite('ndvi_contrasted.png', ndvi_contrasted)
