@@ -6,51 +6,6 @@ import matplotlib.pyplot as plt
 # import matplotlib.dates as mdates
 # from dateutil import parser
 
-
-def app_setup():
-    '''
-    Check if tables exist. If not, create them.
-    '''
-    with psycopg2.connect(**config()) as con:
-        cur=con.cursor()
-        cur.execute('''drop table if exists sensors''')
-        cur.execute("""create table if not exists sensors (
-                            soil REAL,
-                            temperature REAL, 
-                            humidity REAL, 
-                            camera REAL,
-                            DateTaken TIMESTAMP
-                            )""")
-        cur.execute('''drop table if exists app_user''')
-        cur.execute('''create table if not exists app_user (
-                            id serial primary key,
-                            State text
-                            )''')
-        cur.execute("select * from app_user")
-        if cur.fetchone() is None:
-            cur.execute("insert into app_user (id, State) VALUES(%s, %s)", (0, 'admin'))
-        cur.execute('''drop table if exists manual''')
-        cur.execute("""create table if not exists manual (
-            id serial primary key,
-            soil real,
-            temperature real,
-            humidity real,
-            camera real
-            )""")
-        cur.execute('''drop table if exists timer''')
-        cur.execute("""create table if not exists timer (
-            day TEXT,
-            STime TEXT,
-            FTime TEXT,
-            AmPm1 varchar(2),
-            AmPm2 varchar(2)
-            )""")
-        cur.execute('''drop table if exists admin_user''')
-        cur.execute("""create table if not exists admin_user (
-            command smallint
-            )""")
-        cur.execute('''insert into admin_user (command) VALUES(%s)''', (0,))
-
 #perform an action when called
 def automated():
     with psycopg2.connect(**config()) as con:
@@ -227,8 +182,6 @@ def timer():
 
 
 if __name__ == '__main__':
-    app_setup()
-    
     ws = Tk()
     ws.title('Irrigation Controller')
     ws.geometry('1280x720')
@@ -331,7 +284,7 @@ if __name__ == '__main__':
                 lower_tree.delete(item)
             with psycopg2.connect(**config()) as con:
                 cur=con.cursor()
-                cur.execute("select * from sensors where DateTaken > NOW() - INTERVAL '1 minute'")
+                cur.execute("select * from sensors where datetaken > NOW() - INTERVAL '1 minute'")
                 records=cur.fetchall()
             #add data to screen
             global inc
